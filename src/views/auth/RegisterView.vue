@@ -35,7 +35,7 @@ const { mobile } = useDisplay()
                 Already have an account?
                 <router-link
                   class="text-orange-darken-2 font-weight-black"
-                  to="/login"
+                  to="/"
                   >Click here to Login</router-link
                 >
               </h5>
