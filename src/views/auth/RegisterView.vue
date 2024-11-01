@@ -11,14 +11,16 @@ const { mobile } = useDisplay()
     <template #content
       ><v-row class="d-flex justify-center">
         <v-col cols="12" md="6">
-          <v-card class="mx-auto mt-16" color="orange-darken-2" elevation="24">
+          <v-card class="mx-auto mt-16" color="grey-lighten-1" elevation="24">
             <v-card-title class="text-center">
               <v-img
                 class="mx-auto"
                 src="/public/images/logo-favicon.png"
                 :width="mobile ? '75%' : '25%'"
               ></v-img>
-              <h3 class="font-weight-black">Register to FitQuest</h3>
+              <h3 class="font-weight-black">
+                Welcome to Fit<span class="text-orange-darken-2">Quest</span>
+              </h3>
               <p class="font-weight-bold">Registration Form</p>
             </v-card-title>
 
@@ -31,7 +33,7 @@ const { mobile } = useDisplay()
 
               <h5 class="text-center">
                 Already have an account?
-                <router-link class="text-primary" to="login"
+                <router-link class="text-orange-darken-2" to="login"
                   >Click here to Login</router-link
                 >
               </h5>
