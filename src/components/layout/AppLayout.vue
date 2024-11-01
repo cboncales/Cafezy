@@ -38,7 +38,7 @@ function onClick() {
         border
         app
       >
-        2024 - Copyright FitQuest
+        Copyright © 2024 - FitQuest | All Rights Reserved
       </v-footer>
     </v-app>
   </v-responsive>
