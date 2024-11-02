@@ -1,27 +1,67 @@
 <script setup>
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+  confirmedValidator,
+} from '@/utilities/validators'
 import { ref } from 'vue'
+
+const formDataDefault = {
+  firstname: '',
+  lastname: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
+}
+
+const formData = ref({
+  ...formDataDefault,
+})
 
 const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
+const refVForm = ref()
+
+const onSubmit = () => {
+  // alert(formData.value.email)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
+}
 </script>
 
 <template>
-  <v-form fast-fail @submit.prevent>
+  <v-form ref="refVForm" @submit.prevent="onFormSubmit">
     <v-row>
       <v-col cols="12" md="6">
-        <v-text-field label="FirstName"></v-text-field>
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-text-field label="LastName"></v-text-field>
-      </v-col>
-      <v-col cols="12">
         <v-text-field
-          label="Email"
-          prepend-inner-icon="mdi-email-outline"
+          v-model="formData.firstname"
+          label="FirstName"
+          :rules="[requiredValidator]"
         ></v-text-field>
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field
+          v-model="formData.lastname"
+          label="LastName"
+          :rules="[requiredValidator]"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12">
+        <v-text-field
+          v-model="formData.email"
+          label="Email"
+          prepend-inner-icon="mdi-email-outline"
+          :rules="[requiredValidator, emailValidator]"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field
+          v-model="formData.password"
           prepend-inner-icon="mdi-lock-outline"
           label="Password"
           :type="isPasswordVisible ? 'text' : 'password'"
@@ -29,10 +69,12 @@ const isPasswordConfirmVisible = ref(false)
             isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
           "
           @click:append-inner="isPasswordVisible = !isPasswordVisible"
+          :rules="[requiredValidator, passwordValidator]"
         ></v-text-field>
       </v-col>
       <v-col cols="12" md="6">
         <v-text-field
+          v-model="formData.password_confirmation"
           prepend-inner-icon="mdi-lock-outline"
           label="Confirm Password"
           :type="isPasswordConfirmVisible ? 'text' : 'password'"
@@ -42,6 +84,13 @@ const isPasswordConfirmVisible = ref(false)
           @click:append-inner="
             isPasswordConfirmVisible = !isPasswordConfirmVisible
           "
+          :rules="[
+            requiredValidator,
+            confirmedValidator(
+              formData.password_confirmation,
+              formData.password,
+            ),
+          ]"
         ></v-text-field>
       </v-col>
     </v-row>
