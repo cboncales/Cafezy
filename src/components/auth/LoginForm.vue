@@ -1,5 +1,5 @@
 <script setup>
-import { requiredValidator, emailValidator } from '@/utilities/validators'
+import { requiredValidator, emailValidator } from '@/utils/validators'
 import { ref } from 'vue'
 
 const isPasswordVisible = ref(false)
@@ -26,7 +26,7 @@ const onFormSubmit = () => {
 </script>
 
 <template>
-  <v-form ref="refVForm" @submit.prevent="onFormSubmit">
+  <v-form class="mt-5" ref="refVForm" @submit.prevent="onFormSubmit">
     <v-text-field
       v-model="formData.email"
       label="Email"

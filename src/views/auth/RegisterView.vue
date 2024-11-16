@@ -31,7 +31,7 @@ const { mobile } = useDisplay()
                   :width="mobile ? '75%' : '25%'"
                 ></v-img>
                 <h3 class="font-weight-black">
-                  Welcome to Fit<span class="text-orange-darken-2">Quest</span>
+                  Welcome to Café<span class="text-orange-darken-2">zy</span>
                 </h3>
                 <p class="font-weight-bold">Register</p>
               </v-card-title>
