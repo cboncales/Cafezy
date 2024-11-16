@@ -8,7 +8,11 @@ import {
 import { ref } from 'vue'
 import AlertNotification from '@/components/common/AlertNotification.vue'
 import { supabase, FormActionDefault } from '@/utils/supabase.js'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+// Load Variables
 const formDataDefault = {
   firstname: '',
   lastname: '',
@@ -29,8 +33,11 @@ const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
 const refVForm = ref()
 
+// Register Functionality
 const onSubmit = async () => {
+  // Reset Form Action utils
   formAction.value = { ...FormActionDefault }
+  // Turn on processing
   formAction.value.formProcess = true
 
   const { data, error } = await supabase.auth.signUp({
@@ -45,18 +52,23 @@ const onSubmit = async () => {
   })
 
   if (error) {
-    console.log(error)
+    // Add Error Message and Status Code
     formAction.value.formErrorMessage = error.messsage
     formAction.value.formStatus = error.status
   } else if (data) {
-    console.log(data)
+    // Add Success Message
     formAction.value.formSuccessMessage = 'Successfully Registered Account.'
-    refVForm.value?.reset()
+    // Add more actions if you want
+    router.replace('/dashboard')
   }
 
+  // Reset Form
+  refVForm.value?.reset()
+  // Turn off processing
   formAction.value.formProcess = false
 }
 
+// Trigger Validators
 const onFormSubmit = () => {
   refVForm.value?.validate().then(({ valid }) => {
     if (valid) onSubmit()
@@ -134,10 +146,10 @@ const onFormSubmit = () => {
     <v-btn
       class="mt-2 bg-orange-darken-2"
       type="submit"
-      block
       prepend-icon="mdi-dumbbell"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
+      block
       >Register</v-btn
     >
   </v-form>
