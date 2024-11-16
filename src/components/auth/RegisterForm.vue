@@ -10,6 +10,7 @@ import AlertNotification from '@/components/common/AlertNotification.vue'
 import { supabase, FormActionDefault } from '@/utils/supabase.js'
 import { useRouter } from 'vue-router'
 
+// Utilize pre-defined vue functions
 const router = useRouter()
 
 // Load Variables
@@ -58,7 +59,7 @@ const onSubmit = async () => {
   } else if (data) {
     // Add Success Message
     formAction.value.formSuccessMessage = 'Successfully Registered Account.'
-    // Add more actions if you want
+    // Redirect Account to Dashboard
     router.replace('/dashboard')
   }
 
