@@ -72,6 +72,7 @@ const onFormSubmit = () => {
       label="Email"
       prepend-inner-icon="mdi-email-outline"
       :rules="[requiredValidator, emailValidator]"
+      autocomplete="email"
     >
     </v-text-field>
 
@@ -85,6 +86,7 @@ const onFormSubmit = () => {
       "
       @click:append-inner="isPasswordVisible = !isPasswordVisible"
       :rules="[requiredValidator]"
+      autocomplete="current-password"
     ></v-text-field>
 
     <v-btn
