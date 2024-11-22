@@ -91,7 +91,7 @@ const onFormSubmit = () => {
       class="mt-2 bg-orange-darken-2"
       type="submit"
       block
-      prepend-icon="mdi-dumbbell"
+      prepend-icon="mdi-silverware-fork-knife"
       >Log in</v-btn
     >
   </v-form>

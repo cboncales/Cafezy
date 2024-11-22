@@ -77,7 +77,7 @@ onMounted(() => {
         app
       >
         <div :class="mobile ? 'w-100 text-center' : ''">
-          Copyright © 2024 - FitQuest | All Rights Reserved
+          Copyright © 2024 - Cafézy | All Rights Reserved
         </div>
       </v-footer>
     </v-app>
