@@ -29,7 +29,7 @@ const router = createRouter({
 
     // System Pages
     {
-      path: '/system/dashboard',
+      path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
       meta: { requiresAuth: true },
@@ -47,7 +47,7 @@ const router = createRouter({
       component: ForbiddenView,
     },
     {
-      path: '/not-found',
+      path: '/:catchAll(.*)',
       name: 'not-found',
       component: NotFoundView,
     },
