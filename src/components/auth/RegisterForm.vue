@@ -7,7 +7,7 @@ import {
 } from '@/utils/validators'
 import { ref } from 'vue'
 import AlertNotification from '@/components/common/AlertNotification.vue'
-import { supabase, FormActionDefault } from '@/utils/supabase.js'
+import { supabase, formActionDefault } from '@/utils/supabase.js'
 import { useRouter } from 'vue-router'
 
 // Utilize pre-defined vue functions
@@ -27,7 +27,7 @@ const formData = ref({
 })
 
 const formAction = ref({
-  ...FormActionDefault,
+  ...formActionDefault,
 })
 
 const isPasswordVisible = ref(false)
@@ -37,7 +37,7 @@ const refVForm = ref()
 // Register Functionality
 const onSubmit = async () => {
   // Reset Form Action utils
-  formAction.value = { ...FormActionDefault }
+  formAction.value = { ...formActionDefault }
   // Turn on processing
   formAction.value.formProcess = true
 
@@ -48,6 +48,7 @@ const onSubmit = async () => {
       data: {
         firstname: formData.value.firstname,
         lastname: formData.value.lastname,
+        is_admin: false,
       },
     },
   })
@@ -147,7 +148,7 @@ const onFormSubmit = () => {
     <v-btn
       class="mt-2 bg-orange-darken-2"
       type="submit"
-      prepend-icon="mdi-dumbbell"
+      prepend-icon="mdi-silverware-fork-knife"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
       block

@@ -5,7 +5,7 @@ const props = defineProps(['formSuccessMessage', 'formErrorMessage'])
 <template>
   <v-alert
     v-if="props.formSuccessMessage"
-    :alert="props.formSuccessMessage"
+    :text="props.formSuccessMessage"
     title="Success!"
     type="success"
     variant="tonal"
@@ -13,9 +13,10 @@ const props = defineProps(['formSuccessMessage', 'formErrorMessage'])
     border="start"
     closable
   ></v-alert>
+
   <v-alert
     v-if="props.formErrorMessage"
-    :alert="props.formErrorMessage"
+    :text="props.formErrorMessage"
     title="Ooops!"
     type="error"
     variant="tonal"
