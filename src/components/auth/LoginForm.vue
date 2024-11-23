@@ -44,7 +44,7 @@ const onSubmit = async () => {
     // Add Success Message
     formAction.value.formSuccessMessage = 'Successfully Logged Account.'
     // Redirect Account to Dashboard
-    router.replace('/system/dashboard')
+    router.replace('/dashboard')
   }
 
   // Reset Form

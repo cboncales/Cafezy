@@ -27,7 +27,7 @@ const { mobile } = useDisplay()
               <v-card-title class="text-center">
                 <v-img
                   class="mx-auto"
-                  src="/src/images/cafezy-logo.png"
+                  src="/src/images/logo-favicon.png"
                   :width="mobile ? '75%' : '25%'"
                 ></v-img>
                 <h3 class="font-weight-black">
