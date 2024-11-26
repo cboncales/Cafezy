@@ -43,14 +43,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue' // Import ref for reactivity
-import { useDisplay } from 'vuetify' // Vuetify's display composable
+import { useDisplay } from 'vuetify'
+import { ref, watch } from 'vue'
 
-// Detect if the screen is mobile
+const props = defineProps(['isDrawerVisible'])
 const { mobile } = useDisplay()
 
-// Reactive state for drawer visibility
-const isDrawerVisible = ref(true)
+const isDrawerVisible = ref(props.isDrawerVisible)
+watch(props, () => {
+  isDrawerVisible.value = props.isDrawerVisible
+})
 
 // Navigation items
 const mainNav = [
