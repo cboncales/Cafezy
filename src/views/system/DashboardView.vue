@@ -133,6 +133,55 @@ const isDrawerVisible = ref(true)
             </v-col>
           </v-row>
         </v-container>
+
+        <v-container>
+          <v-row justify="center" align="center">
+            <!-- Card 1 -->
+            <v-col cols="12" md="4">
+              <v-card class="ordering-card" outlined>
+                <v-card-title>
+                  <h2>Pizza</h2>
+                </v-card-title>
+                <v-card-text>
+                  Enjoy freshly baked pizza with delicious toppings.
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="primary" block>Order Now</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+
+            <!-- Card 2 -->
+            <v-col cols="12" md="4">
+              <v-card class="ordering-card" outlined>
+                <v-card-title>
+                  <h2>Burgers</h2>
+                </v-card-title>
+                <v-card-text>
+                  Juicy and flavorful burgers made just for you.
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="primary" block>Order Now</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+
+            <!-- Card 3 -->
+            <v-col cols="12" md="4">
+              <v-card class="ordering-card" outlined>
+                <v-card-title>
+                  <h2>Drinks</h2>
+                </v-card-title>
+                <v-card-text>
+                  Refresh yourself with a variety of cool drinks.
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="primary" block>Order Now</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
       </div>
     </template>
   </AppLayout>
