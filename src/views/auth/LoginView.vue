@@ -27,7 +27,7 @@ const { mobile } = useDisplay()
               <v-card-title class="text-center">
                 <v-img
                   class="mx-auto"
-                  src="/public/images/cafezy-logo.png"
+                  src="/images/cafezy-logo.png"
                   :width="mobile ? '75%' : '25%'"
                 ></v-img>
                 <h3 class="font-weight-black">
@@ -61,7 +61,8 @@ const { mobile } = useDisplay()
 </template>
 
 <style scoped>
-* {
+h3 {
   font-family: 'Quicksand', sans-serif;
+  /* font-weight: 500; */
 }
 </style>
