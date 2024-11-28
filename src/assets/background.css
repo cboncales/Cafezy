@@ -1,0 +1,53 @@
+/* Main content styles */
+.content-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Background section */
+.blurred-background {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Adjust as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 15px; /* Optional for rounded corners */
+}
+
+/* Background image (no blur) */
+.background-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/background.png'); /* Correct path for public folder */
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+/* Text overlay */
+.blurred-overlay {
+  position: relative;
+  z-index: 2; /* Ensure it sits above the background */
+  color: white;
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem; /* Adjust size as needed */
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1.2rem; /* Adjust size as needed */
+  opacity: 0.8;
+}
+
+.background-image {
+  background-color: #ddd; /* Light gray for testing */
+}
