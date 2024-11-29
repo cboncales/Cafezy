@@ -77,7 +77,12 @@ const toggleFormMode = () => {
         <v-btn
           class="login-btn mx-2"
           prepend-icon="mdi mdi-login"
-          @click="isLoginModalVisible = true"
+          @click="
+            () => {
+              isLoginModalVisible = true
+              isRegisterMode = false
+            }
+          "
         >
           Log in
         </v-btn>
