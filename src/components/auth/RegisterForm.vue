@@ -48,7 +48,7 @@ const onSubmit = async () => {
       data: {
         firstname: formData.value.firstname,
         lastname: formData.value.lastname,
-        is_admin: true,
+        is_admin: false,
       },
     },
   })
@@ -61,7 +61,7 @@ const onSubmit = async () => {
     // Add Success Message
     formAction.value.formSuccessMessage = 'Successfully Registered Account.'
     // Redirect Account to Dashboard
-    router.replace('/system/dashboard')
+    router.replace('/dashboard')
   }
 
   // Reset Form
@@ -148,7 +148,7 @@ const onFormSubmit = () => {
     <v-btn
       class="mt-2 bg-orange-darken-2"
       type="submit"
-      prepend-icon="mdi-dumbbell"
+      prepend-icon="mdi-silverware-fork-knife"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
       block

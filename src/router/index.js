@@ -29,7 +29,7 @@ const router = createRouter({
 
     // System Pages
     {
-      path: '/system/dashboard',
+      path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
       meta: { requiresAuth: true },
@@ -47,8 +47,7 @@ const router = createRouter({
       component: ForbiddenView,
     },
     {
-      path: '/not-found',
-      name: 'not-found',
+      path: '/:catchAll(.*)',
       component: NotFoundView,
     },
   ],
@@ -66,6 +65,12 @@ router.beforeEach(async to => {
   if (isLoggedIn && !to.meta.requiresAuth) {
     // redirect the user to the dashboard page
     return { name: 'dashboard' }
+  }
+
+  // If not logged in and going to system pages
+  if (!isLoggedIn && to.meta.requiresAuth) {
+    // redirect the user to the login page
+    return { name: 'login' }
   }
 
   // Check if the user is logged in
@@ -89,12 +94,6 @@ router.beforeEach(async to => {
     // Add conditions here if needed
     // if(isCashier) {
     // }
-  }
-
-  // If not logged in and going to system pages
-  if (!isLoggedIn && to.meta.requiresAuth) {
-    // redirect the user to the login page
-    return { name: 'login' }
   }
 
   // Redirect to 404 Not Found if the route does not exist

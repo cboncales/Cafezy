@@ -44,7 +44,7 @@ const onSubmit = async () => {
     // Add Success Message
     formAction.value.formSuccessMessage = 'Successfully Logged Account.'
     // Redirect Account to Dashboard
-    router.replace('/system/dashboard')
+    router.replace('/dashboard')
   }
 
   // Reset Form
@@ -72,6 +72,7 @@ const onFormSubmit = () => {
       label="Email"
       prepend-inner-icon="mdi-email-outline"
       :rules="[requiredValidator, emailValidator]"
+      autocomplete="email"
     >
     </v-text-field>
 
@@ -85,13 +86,14 @@ const onFormSubmit = () => {
       "
       @click:append-inner="isPasswordVisible = !isPasswordVisible"
       :rules="[requiredValidator]"
+      autocomplete="current-password"
     ></v-text-field>
 
     <v-btn
       class="mt-2 bg-orange-darken-2"
       type="submit"
       block
-      prepend-icon="mdi-dumbbell"
+      prepend-icon="mdi-silverware-fork-knife"
       >Log in</v-btn
     >
   </v-form>
