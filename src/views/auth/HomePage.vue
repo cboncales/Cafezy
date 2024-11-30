@@ -71,12 +71,24 @@ const foodCategories = [
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/pork-adobo.jpg"
                     alt="chicken adebayor"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Pork Adebayor</h2>
@@ -88,23 +100,30 @@ const foodCategories = [
                     black peppercorns. It's often served with rice and is one of
                     the most popular Filipino comfort foods.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="rounded-pill" color="orange-darken-1" block
-                      >Order Now</v-btn
-                    >
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 2 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/halo-halo2.jpg"
                     alt="chicken adebayor"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Holo Lulo</h2>
@@ -116,23 +135,30 @@ const foodCategories = [
                     with leche flan and purple yam (ube). It’s a refreshing
                     treat, especially during hot weather.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="rounded-pill" color="orange-darken-1" block
-                      >Order Now</v-btn
-                    >
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 3 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/chicken-curry.jpg"
                     alt="stephen curry"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Stephen Curry</h2>
@@ -144,23 +170,30 @@ const foodCategories = [
                     powder, and mixed with vegetables like potatoes, carrots,
                     and bell peppers. It's a comforting and flavorful dish.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="rounded-pill" color="orange-darken-1" block
-                      >Order Now</v-btn
-                    >
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 4 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/paksiw.jpg"
                     alt="pakistan"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Pakistan</h2>
@@ -172,23 +205,30 @@ const foodCategories = [
                     tangy and savory flavor, with a distinct vinegar base that
                     is cooked until tender.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="rounded-pill" color="orange-darken-1" block
-                      >Order Now</v-btn
-                    >
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 5 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/mechado.jpg"
                     alt="Makarena"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Makarena</h2>
@@ -200,23 +240,30 @@ const foodCategories = [
                     onions, and potatoes. It has a savory and slightly sweet
                     sauce, often enjoyed with rice.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="rounded-pill" color="orange-darken-1" block
-                      >Order Now</v-btn
-                    >
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 6 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/beef-steak.jpg"
                     alt="Biskwit"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Biskwit</h2>
@@ -228,11 +275,6 @@ const foodCategories = [
                     is typically cooked with onions and served with a savory,
                     tangy sauce.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn class="rounded-pill" color="orange-darken-1" block
-                      >Order Now</v-btn
-                    >
-                  </v-card-actions>
                 </v-card>
               </v-col>
             </v-row>
@@ -338,12 +380,49 @@ h3 {
 }
 
 .ordering-card {
+  position: relative;
   margin-bottom: 20px;
 }
 
 .ordering-card h2,
 .ordering-card h3 {
   color: rgb(82, 80, 80);
+}
+
+.hover-image {
+  position: relative;
+  transition: filter 0.3s ease;
+}
+
+.hover-image:hover {
+  filter: brightness(0.7);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.hover-image:hover .overlay {
+  opacity: 1;
+}
+
+.hover-actions {
+  z-index: 2;
+}
+
+.order-btn {
+  background-color: #000;
 }
 
 /* Ordering Section */
