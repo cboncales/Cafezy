@@ -1,5 +1,5 @@
 <script setup>
-import { isAuthenticated } from '@/utils/supabase'
+import { isAuthenticated, getUserInformation } from '@/utils/supabase'
 import ProfileHeader from './ProfileHeader.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
@@ -13,6 +13,14 @@ const emit = defineEmits(['isDrawerVisible'])
 
 const isLoginModalVisible = ref(false)
 const isRegisterMode = ref(false)
+
+const isAdmin = ref(false)
+
+// Get user info and check if admin
+const getUser = async () => {
+  const userMetadata = await getUserInformation()
+  isAdmin.value = userMetadata?.is_admin || false
+}
 
 //utilize predefined vue functions
 const { mobile } = useDisplay()
@@ -31,6 +39,11 @@ const isLoggedIn = ref(false)
 //Get Authentication status from supabase
 const getLoggedStatus = async () => {
   isLoggedIn.value = await isAuthenticated()
+  if (isLoggedIn.value) {
+    await getUser() // Fetch user data only if logged in
+  } else {
+    isAdmin.value = false // Reset admin status on logout
+  }
 }
 
 //Load Functions during component rendering
@@ -49,7 +62,7 @@ const toggleFormMode = () => {
     <v-app>
       <v-app-bar class="pa-1" border>
         <v-app-bar-nav-icon
-          v-if="props.isWithAppBarNavIcon"
+          v-if="props.isWithAppBarNavIcon && isAdmin"
           icon="mdi-menu"
           @click="emit('isDrawerVisible')"
         >
