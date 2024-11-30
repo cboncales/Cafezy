@@ -66,9 +66,9 @@ const toggleFormMode = () => {
           >Café<span class="text-logos">zy</span></span
         >
 
-        <v-btn class="nav-btn ml-16" to="">Home</v-btn>
-        <v-btn class="nav-btn mx-2" to="">Food</v-btn>
-        <v-btn class="nav-btn mx-2" to="">Contact Us</v-btn>
+        <v-btn class="nav-btn ml-16" to="/login">Home</v-btn>
+        <v-btn class="nav-btn mx-2" to="/food">Food</v-btn>
+        <v-btn class="nav-btn mx-2" to="/contact">Contact Us</v-btn>
 
         <v-spacer></v-spacer>
 
@@ -88,7 +88,7 @@ const toggleFormMode = () => {
         </v-btn>
 
         <v-dialog v-model="isLoginModalVisible" persistent max-width="400">
-          <v-card>
+          <v-card class="rounded-xl">
             <v-card-title class="text-h5 text-center">
               {{ isRegisterMode ? 'Register' : 'Log in' }}
             </v-card-title>
@@ -117,7 +117,12 @@ const toggleFormMode = () => {
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="grey" text @click="isLoginModalVisible = false">
+              <v-btn
+                class="cancel-btn"
+                color="grey-darken-4"
+                text
+                @click="isLoginModalVisible = false"
+              >
                 Cancel
               </v-btn>
             </v-card-actions>
@@ -202,13 +207,13 @@ const toggleFormMode = () => {
 }
 
 .nav-btn {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: rgb(82, 80, 80);
 }
 
 .login-btn {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: rgb(82, 80, 80);
 }
@@ -224,6 +229,10 @@ const toggleFormMode = () => {
 }
 
 ::v-deep(.social-links:hover) {
+  background-color: rgba(255, 145, 0, 0.1) !important;
+  color: rgb(255, 145, 0) !important;
+}
+::v-deep(.cancel-btn:hover) {
   background-color: rgba(255, 145, 0, 0.1) !important;
   color: rgb(255, 145, 0) !important;
 }

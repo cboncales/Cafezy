@@ -146,7 +146,7 @@ const onFormSubmit = () => {
     </v-row>
 
     <v-btn
-      class="mt-2 bg-orange-darken-2"
+      class="mt-2 bg-orange-darken-2 rounded-xl"
       type="submit"
       prepend-icon="mdi-silverware-fork-knife"
       :disabled="formAction.formProcess"
