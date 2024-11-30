@@ -90,7 +90,7 @@ const onFormSubmit = () => {
     ></v-text-field>
 
     <v-btn
-      class="mt-2 bg-orange-darken-2"
+      class="mt-2 bg-orange-darken-2 rounded-xl"
       type="submit"
       block
       prepend-icon="mdi-silverware-fork-knife"
