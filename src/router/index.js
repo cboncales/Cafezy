@@ -1,7 +1,6 @@
 import { getUserInformation, isAuthenticated } from '@/utils/supabase'
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '@/views/auth/LoginView.vue'
-import RegisterView from '@/views/auth/RegisterView.vue'
+import HomePage from '@/views/auth/HomePage.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
@@ -17,13 +16,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
-      meta: { requiresAuth: false },
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: RegisterView,
+      component: HomePage,
       meta: { requiresAuth: false },
     },
 
