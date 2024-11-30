@@ -1,10 +1,22 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getUserInformation } from '@/utils/supabase'
 
 // State for drawer visibility
 const isDrawerVisible = ref(true)
+
+const isAdmin = ref(false)
+
+const getUser = async () => {
+  const userMetadata = await getUserInformation()
+  isAdmin.value = userMetadata?.is_admin || false
+}
+
+onMounted(() => {
+  getUser()
+})
 </script>
 
 <template>
@@ -14,7 +26,10 @@ const isDrawerVisible = ref(true)
   >
     <!-- Side Navigation -->
     <template #navigation>
-      <SideNavigation :is-drawer-visible="isDrawerVisible"></SideNavigation>
+      <SideNavigation
+        v-if="isAdmin"
+        :is-drawer-visible="isDrawerVisible"
+      ></SideNavigation>
     </template>
 
     <!-- Main Content -->
