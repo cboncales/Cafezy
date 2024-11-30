@@ -89,7 +89,9 @@ const foodCategories = [
                     the most popular Filipino comfort foods.
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
+                    <v-btn class="rounded-pill" color="orange-darken-1" block
+                      >Order Now</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -115,7 +117,9 @@ const foodCategories = [
                     treat, especially during hot weather.
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
+                    <v-btn class="rounded-pill" color="orange-darken-1" block
+                      >Order Now</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -141,7 +145,9 @@ const foodCategories = [
                     and bell peppers. It's a comforting and flavorful dish.
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
+                    <v-btn class="rounded-pill" color="orange-darken-1" block
+                      >Order Now</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -167,7 +173,9 @@ const foodCategories = [
                     is cooked until tender.
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
+                    <v-btn class="rounded-pill" color="orange-darken-1" block
+                      >Order Now</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -193,7 +201,9 @@ const foodCategories = [
                     sauce, often enjoyed with rice.
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
+                    <v-btn class="rounded-pill" color="orange-darken-1" block
+                      >Order Now</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -219,7 +229,9 @@ const foodCategories = [
                     tangy sauce.
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
+                    <v-btn class="rounded-pill" color="orange-darken-1" block
+                      >Order Now</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-col>

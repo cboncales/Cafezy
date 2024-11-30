@@ -171,13 +171,14 @@ const toggleFormMode = () => {
       </v-main>
 
       <v-footer
-        class="font-weight-bold"
+        class="font-weight-bold footer-background"
         :class="mobile ? 'text-caption' : ''"
-        elevation="24"
         border
-        app
       >
-        <div :class="mobile ? 'w-100 text-center' : ''">
+        <div
+          class="py-10"
+          :class="mobile ? 'w-100 text-center' : 'w-100 text-center'"
+        >
           Copyright © 2024 - Cafézy | All Rights Reserved
         </div>
       </v-footer>
@@ -232,4 +233,40 @@ const toggleFormMode = () => {
   font-weight: 800;
   color: rgb(82, 80, 80);
 }
+
+/* footer */
+.footer-background {
+  position: relative;
+  background-image: url('/images/footer-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.795);
+  z-index: 1;
+}
+
+.footer-background div {
+  position: relative;
+  z-index: 2;
+}
+
+/* Override the .v-footer--border styles */
+.v-footer--border {
+  border-width: 0 !important;
+  box-shadow: none !important;
+}
+/* footer */
 </style>
