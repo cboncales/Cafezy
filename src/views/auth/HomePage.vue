@@ -329,7 +329,5 @@ h3 {
   margin-bottom: 20px;
 }
 
-.card-img {
-}
 /* Ordering Section */
 </style>
