@@ -47,7 +47,7 @@ const toggleFormMode = () => {
 <template>
   <v-responsive>
     <v-app>
-      <v-app-bar class="pa-3" border>
+      <v-app-bar class="pa-1" border>
         <v-app-bar-nav-icon
           v-if="props.isWithAppBarNavIcon"
           icon="mdi-menu"
