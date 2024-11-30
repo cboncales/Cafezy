@@ -75,6 +75,7 @@ const toggleFormMode = () => {
         <ProfileHeader v-if="isLoggedIn"></ProfileHeader>
 
         <v-btn
+          v-if="!isLoggedIn && $route.name !== 'dashboard'"
           class="login-btn mx-2"
           prepend-icon="mdi mdi-login"
           @click="
