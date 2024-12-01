@@ -1,8 +1,7 @@
 <script setup>
 import { isAuthenticated, getUserInformation } from '@/utils/supabase'
 import ProfileHeader from './ProfileHeader.vue'
-import LoginForm from '@/components/auth/LoginForm.vue'
-import RegisterForm from '@/components/auth/RegisterForm.vue'
+import AuthModal from '../auth/AuthModal.vue'
 
 import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
@@ -13,8 +12,9 @@ const emit = defineEmits(['isDrawerVisible'])
 
 const isLoginModalVisible = ref(false)
 const isRegisterMode = ref(false)
-
 const isAdmin = ref(false)
+//Load Variables
+const isLoggedIn = ref(false)
 
 // Get user info and check if admin
 const getUser = async () => {
@@ -26,9 +26,6 @@ const getUser = async () => {
 const { mobile } = useDisplay()
 
 // const theme = ref(localStorage.getItem('theme') ?? 'light')
-
-//Load Variables
-const isLoggedIn = ref(false)
 
 //Toggle Theme
 // function onToggleTheme() {
@@ -82,6 +79,7 @@ const toggleFormMode = () => {
         <v-btn class="nav-btn ml-16" to="/login">Home</v-btn>
         <v-btn class="nav-btn mx-2" to="/food">Food</v-btn>
         <v-btn class="nav-btn mx-2" to="/contact">Contact Us</v-btn>
+        <!-- <v-btn class="nav-btn mx-2" to="/order">Orders</v-btn> -->
 
         <v-spacer></v-spacer>
 
@@ -101,47 +99,6 @@ const toggleFormMode = () => {
           Log in
         </v-btn>
 
-        <v-dialog v-model="isLoginModalVisible" persistent max-width="400">
-          <v-card class="rounded-xl">
-            <v-card-title class="text-h5 text-center">
-              {{ isRegisterMode ? 'Register' : 'Log in' }}
-            </v-card-title>
-            <v-card-text>
-              <component :is="isRegisterMode ? RegisterForm : LoginForm" />
-              <v-divider class="my-5"></v-divider>
-
-              <h5 class="text-center">
-                {{
-                  isRegisterMode
-                    ? 'Already have an account?'
-                    : "Don't have an account?"
-                }}
-                <span
-                  class="text-orange-darken-2 font-weight-black"
-                  @click="toggleFormMode"
-                  style="cursor: pointer"
-                >
-                  {{
-                    isRegisterMode
-                      ? 'Click here to Log in'
-                      : 'Click here to Register'
-                  }}
-                </span>
-              </h5>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                class="cancel-btn"
-                color="grey-darken-4"
-                text
-                @click="isLoginModalVisible = false"
-              >
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
         <span class="line">|</span>
         <div class="me-10">
           <v-btn
@@ -183,6 +140,13 @@ const toggleFormMode = () => {
         ></v-btn> -->
       </v-app-bar>
 
+      <!-- Modals -->
+      <AuthModal
+        v-model:isVisible="isLoginModalVisible"
+        :is-register-mode="isRegisterMode"
+        @toggleFormMode="toggleFormMode"
+      />
+
       <slot name="navigation"></slot>
 
       <v-main>
@@ -210,6 +174,7 @@ const toggleFormMode = () => {
   font-family: 'Quicksand', sans-serif;
 }
 
+/* navigation style */
 .text-logo {
   font-size: 35px;
   font-weight: 900;
@@ -256,6 +221,7 @@ const toggleFormMode = () => {
   font-weight: 800;
   color: rgb(82, 80, 80);
 }
+/* navigation style */
 
 /* footer */
 .footer-background {
