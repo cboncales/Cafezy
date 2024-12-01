@@ -12,7 +12,7 @@ const { mobile } = useDisplay()
         <v-row align="center" justify="center" class="contact-content">
           <v-col cols="12" md="8" lg="6" class="z-index-2">
             <v-card class="contact-card text-center">
-              <v-card-title class="text-h2 font-weight-bold font-fam">
+              <v-card-title class="text-h3 font-weight-bold font-fam">
                 Get in Touch
               </v-card-title>
               <v-card-text>
