@@ -94,7 +94,7 @@ const foodCategories = [
           <!-- Ordering Section -->
           <v-container>
             <div class="head-container my-16">
-              <h1 class="head-text text-center my-5">Best Seller Foods</h1>
+              <h1 class="head-text text-center my-5">Popular</h1>
               <v-item-group
                 class="text-center"
                 selected-class="bg-orange"
