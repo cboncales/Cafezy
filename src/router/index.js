@@ -4,6 +4,7 @@ import HomePage from '@/views/auth/HomePage.vue'
 import FoodPage from '@/views/auth/FoodPage.vue'
 import ContactPage from '@/views/auth/ContactPage.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
+import OrderView from '@/views/system/OrderView.vue'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 
@@ -39,6 +40,12 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/order',
+      name: 'order',
+      component: OrderView,
       meta: { requiresAuth: true },
     },
     // Add More Pages Here

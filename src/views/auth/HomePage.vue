@@ -1,8 +1,23 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useDisplay } from 'vuetify'
+import { ref } from 'vue'
 
 const { mobile } = useDisplay()
+
+// State to track if the user is logged in
+const isLoggedIn = ref(false) // Replace this with actual authentication logic
+const showLoginModal = ref(false)
+
+// Method to handle the Order Now button click
+const handleOrderNow = () => {
+  if (!isLoggedIn.value) {
+    showLoginModal.value = true
+  } else {
+    // Proceed with the order
+    console.log('Order placed!')
+  }
+}
 
 // Food Categories
 const foodCategories = [
@@ -84,6 +99,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
                         >
                           Order Now
                         </v-btn>
