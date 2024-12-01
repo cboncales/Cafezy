@@ -79,7 +79,9 @@ const toggleFormMode = () => {
         <v-btn class="nav-btn ml-16" to="/login">Home</v-btn>
         <v-btn class="nav-btn mx-2" to="/food">Food</v-btn>
         <v-btn class="nav-btn mx-2" to="/contact">Contact Us</v-btn>
-        <!-- <v-btn class="nav-btn mx-2" to="/order">Orders</v-btn> -->
+        <v-btn v-if="isLoggedIn && !isAdmin" class="nav-btn mx-2" to="/order">
+          Orders
+        </v-btn>
 
         <v-spacer></v-spacer>
 

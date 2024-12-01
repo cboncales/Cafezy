@@ -1,8 +1,54 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
+import AuthModal from '@/components/auth/AuthModal.vue'
+import { isAuthenticated, getUserInformation } from '@/utils/supabase'
 import { useDisplay } from 'vuetify'
+import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
+
+// State to track if the user is logged in
+const isLoginModalVisible = ref(false)
+const isRegisterMode = ref(false)
+const isLoggedIn = ref(false)
+const isAdmin = ref(false)
+
+// Get user info and check if admin
+const getUser = async () => {
+  const userMetadata = await getUserInformation()
+  isAdmin.value = userMetadata?.is_admin || false
+}
+
+// Method to handle the Order Now button click
+const handleOrderNow = () => {
+  if (!isLoggedIn.value) {
+    isLoginModalVisible.value = true
+    isRegisterMode.value = false
+  } else {
+    // Proceed with the order
+    console.log('Order placed!')
+  }
+}
+
+//Get Authentication status from supabase
+const getLoggedStatus = async () => {
+  isLoggedIn.value = await isAuthenticated()
+  if (isLoggedIn.value) {
+    await getUser() // Fetch user data only if logged in
+  } else {
+    isAdmin.value = false // Reset admin status on logout
+  }
+}
+
+//Load Functions during component rendering
+onMounted(() => {
+  getLoggedStatus()
+})
+
+//Toggle login to register modal
+const toggleFormMode = () => {
+  isRegisterMode.value = !isRegisterMode.value
+}
 
 // Food Categories
 const foodCategories = [
@@ -59,6 +105,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
                         >
                           Order Now
                         </v-btn>
@@ -94,6 +141,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
                         >
                           Order Now
                         </v-btn>
@@ -129,6 +177,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
                         >
                           Order Now
                         </v-btn>
@@ -164,6 +213,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
                         >
                           Order Now
                         </v-btn>
@@ -199,6 +249,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
                         >
                           Order Now
                         </v-btn>
@@ -234,6 +285,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
                         >
                           Order Now
                         </v-btn>
@@ -256,6 +308,13 @@ const foodCategories = [
           </v-container>
         </v-row>
       </v-container>
+
+      <!-- Auth Modal -->
+      <AuthModal
+        v-model:isVisible="isLoginModalVisible"
+        :is-register-mode="isRegisterMode"
+        @toggleFormMode="toggleFormMode"
+      />
     </template>
   </AppLayout>
 </template>

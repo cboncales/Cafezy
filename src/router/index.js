@@ -75,6 +75,11 @@ router.beforeEach(async to => {
     return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
   }
 
+  // Allow public access to FoodPage regardless of login status
+  if (to.name === 'food' || to.name === 'contact') {
+    return true
+  }
+
   // Check if the user is logged in
   if (isLoggedIn && !to.meta.requiresAuth) {
     // redirect the user to the dashboard page
