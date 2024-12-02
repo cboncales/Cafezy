@@ -1,12 +1,40 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
+import SideNavigation from '@/components/layout/SideNavigation.vue'
+import { ref, onMounted } from 'vue'
+import { getUserInformation } from '@/utils/supabase'
 import { useDisplay } from 'vuetify'
 
 const { mobile } = useDisplay()
+
+// State for drawer visibility
+const isDrawerVisible = ref(false)
+
+const isAdmin = ref(false)
+
+const getUser = async () => {
+  const userMetadata = await getUserInformation()
+  isAdmin.value = userMetadata?.is_admin || false
+}
+
+onMounted(() => {
+  getUser()
+})
 </script>
 
 <template>
-  <AppLayout :is-with-app-bar-nav-icon="false">
+  <AppLayout
+    :is-with-app-bar-nav-icon="true"
+    @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
+  >
+    <!-- Side Navigation -->
+    <template #navigation>
+      <SideNavigation
+        v-if="isAdmin"
+        :is-drawer-visible="isDrawerVisible"
+      ></SideNavigation>
+    </template>
+
     <template #content>
       <v-container fluid class="contact-container">
         <v-row align="center" justify="center" class="contact-content">
