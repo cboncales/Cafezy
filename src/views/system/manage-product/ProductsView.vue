@@ -14,16 +14,35 @@
     <!-- Content -->
     <template #content>
       <v-container class="content-container">
-        <div class="my-3">
-          <h1 class="text-h5 mb-4 d-flex align-center">
-            <v-icon class="text-h5" color="black">mdi-food</v-icon> Product
-            Management
-          </h1>
-          <v-btn color="orange-darken-2" @click="openForm"
-            >Create New Product</v-btn
-          >
-        </div>
-
+        <v-row>
+          <v-col class="my-3">
+            <h1 class="text-h5 mb-4 d-flex align-center">
+              <v-icon class="text-h5" color="black">mdi-food</v-icon> Product
+              Management
+            </h1>
+          </v-col>
+        </v-row>
+        <v-row class="d-flex">
+          <v-col>
+            <v-btn color="orange-darken-2" @click="openForm"
+              >Create New Product</v-btn
+            >
+            <v-card class="mx-auto my-10" max-width="400">
+              <v-card-text>
+                <v-text-field
+                  :loading="loading"
+                  append-inner-icon="mdi-magnify"
+                  density="compact"
+                  label="Search Product"
+                  variant="solo"
+                  hide-details
+                  single-line
+                  @click:append-inner="onClick"
+                ></v-text-field>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
         <v-divider></v-divider>
 
         <!-- Product Table -->
@@ -50,11 +69,23 @@
             <v-col class="text-wrap">{{ product.description }}</v-col>
             <v-col>{{ product.category }}</v-col>
             <v-col>
-              <v-btn class="mx-1" icon @click="openForm(product)">
-                <v-icon>mdi-pencil</v-icon>
+              <v-btn
+                variant="text"
+                class="mx-1"
+                density="comfortable"
+                icon
+                @click="openForm(product)"
+              >
+                <v-icon icon="mdi-pencil"></v-icon>
               </v-btn>
-              <v-btn class="mx-1" icon color="error">
-                <v-icon>mdi-delete</v-icon>
+              <v-btn
+                variant="text"
+                class="mx-1"
+                density="comfortable"
+                icon
+                color="error"
+              >
+                <v-icon icon="mdi-delete"></v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -108,6 +139,17 @@ const { mobile } = useDisplay()
 const isDrawerVisible = ref(!mobile.value)
 const isAdmin = ref(true)
 
+const loaded = ref(false)
+const loading = ref(false)
+
+function onClick() {
+  loading.value = true
+  setTimeout(() => {
+    loading.value = false
+    loaded.value = true
+  }, 2000)
+}
+
 const products = ref([
   {
     id: 1,
@@ -152,8 +194,13 @@ const closeForm = () => {
 * {
   font-family: 'Quicksand', sans-serif;
 }
+
 .text-wrap {
   white-space: normal;
   word-wrap: break-word;
+}
+
+.v-card--variant-elevated {
+  box-shadow: none;
 }
 </style>

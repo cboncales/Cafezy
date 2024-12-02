@@ -5,6 +5,7 @@
     :permanent="!mobile"
     width="325"
     class="custom-sidebar"
+    color="grey-lighten-3"
   >
     <v-list dense>
       <!-- App Title -->
@@ -58,13 +59,6 @@
       </v-list-item>
 
       <v-divider class="custom-divider"></v-divider>
-
-      <!-- Settings -->
-      <v-list-item title="Settings" class="rounded-button rounded">
-        <template #prepend>
-          <v-icon>mdi-cog</v-icon>
-        </template>
-      </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -108,17 +102,17 @@ const mainNav = [
 
 /* Hover Effect */
 .rounded-button:hover {
-  background-color: rgba(0, 0, 0, 0.897); /* Subtle white highlight */
-  transform: scale(1.02); /* Slight enlargement */
+  background-color: rgba(0, 0, 0, 0.897);
+  transform: scale(1.02);
 }
 
 /* Custom Divider */
 .custom-divider {
-  color: rgba(0, 0, 0, 0.767); /* Semi-transparent white */
+  color: rgba(0, 0, 0, 0.767);
 }
 
 /* Active State */
 .rounded-button:active {
-  background-color: rgba(255, 255, 255, 0.3); /* Slightly darker highlight */
+  background-color: rgba(0, 0, 0, 0.897);
 }
 </style>
