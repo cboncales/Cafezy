@@ -266,7 +266,8 @@ const toggleFormMode = () => {
 }
 
 .v-footer {
-  position: relative !important; /* Ensures the footer behaves like a normal block */
+  position: relative !important;
+  max-height: max-content;
 }
 /* footer */
 </style>

@@ -13,27 +13,22 @@
 
     <!-- Content -->
     <template #content>
-      <v-container class="content-container">
+      <v-container>
         <div class="my-3">
           <h1 class="text-h5 mb-4 d-flex align-center">
-            <v-icon class="text-h5" color="black">mdi-food</v-icon> Product
-            Management
+            <v-icon class="text-h5" color="black">mdi-account-group</v-icon>
+            User Management
           </h1>
-          <v-btn color="orange-darken-2" @click="openForm"
-            >Create New Product</v-btn
-          >
         </div>
 
-        <v-divider></v-divider>
-
         <!-- Product Table -->
-        <div class="mt-4 mb-10">
+        <div class="mt-4">
           <v-row class="font-weight-bold my-2">
             <v-col>ID</v-col>
             <v-col>Name</v-col>
-            <v-col>Price</v-col>
-            <v-col>Description</v-col>
-            <v-col>Category</v-col>
+            <v-col>Email</v-col>
+            <v-col>Role</v-col>
+            <v-col>Registered Date</v-col>
             <v-col>Actions</v-col>
           </v-row>
 
@@ -42,7 +37,7 @@
           <v-row
             v-for="product in products"
             :key="product.id"
-            class="align-center py-4"
+            class="align-center"
           >
             <v-col>{{ product.id }}</v-col>
             <v-col>{{ product.name }}</v-col>
@@ -107,53 +102,10 @@ const { mobile } = useDisplay()
 
 const isDrawerVisible = ref(!mobile.value)
 const isAdmin = ref(true)
-
-const products = ref([
-  {
-    id: 1,
-    name: 'Bulalo',
-    price: 50,
-    description: 'Beef Soup',
-    category: 'Soup',
-  },
-  {
-    id: 2,
-    name: 'Halo Halo',
-    price: 45,
-    description:
-      'made with crushed ice, sweetened fruits, beans, jellies, and sometimes ice cream, all topped with leche flan and purple yam (ube)',
-    category: 'Dessert',
-  },
-  {
-    id: 3,
-    name: 'Burger',
-    price: 30,
-    description: 'beef burger',
-    category: 'Burger',
-  },
-])
-
-const selectedProduct = ref({})
-const isFormVisible = ref(false)
-
-const openForm = (product = null) => {
-  selectedProduct.value = product
-    ? { ...product }
-    : { name: '', price: 0, description: '', category: '' }
-  isFormVisible.value = true
-}
-
-const closeForm = () => {
-  isFormVisible.value = false
-}
 </script>
 
 <style scoped>
 * {
   font-family: 'Quicksand', sans-serif;
-}
-.text-wrap {
-  white-space: normal;
-  word-wrap: break-word;
 }
 </style>

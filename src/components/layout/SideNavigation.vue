@@ -31,7 +31,11 @@
         </template>
       </v-list-item>
 
-      <v-list-item title="User Management" class="rounded-button rounded" to="">
+      <v-list-item
+        title="User Management"
+        class="rounded-button rounded"
+        to="/user"
+      >
         <template #prepend>
           <v-icon color="white">mdi-account-group</v-icon>
         </template>
@@ -40,14 +44,14 @@
       <v-list-item
         title="Order Management"
         class="rounded-button rounded"
-        to=""
+        to="/manage-order"
       >
         <template #prepend>
           <v-icon color="white">mdi-history</v-icon>
         </template>
       </v-list-item>
 
-      <v-list-item title="Reports" class="rounded-button rounded" to="">
+      <v-list-item title="Reports" class="rounded-button rounded" to="/report">
         <template #prepend>
           <v-icon color="white">mdi-chart-bar</v-icon>
         </template>
