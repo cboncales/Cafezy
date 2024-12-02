@@ -1,11 +1,16 @@
 <script setup>
+import SideNavigation from '@/components/layout/SideNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
+// import ItemsModal from '@/components/layout/ItemsModal.vue'
 import { isAuthenticated, getUserInformation } from '@/utils/supabase'
 import { useDisplay } from 'vuetify'
 import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
+
+// State for drawer visibility
+const isDrawerVisible = ref(false)
 
 // State to track if the user is logged in
 const isLoginModalVisible = ref(false)
@@ -13,20 +18,24 @@ const isRegisterMode = ref(false)
 const isLoggedIn = ref(false)
 const isAdmin = ref(false)
 
+// For Items Modal
+// const isItemsModalVisible = ref(false) // Visibility of ItemsModal
+// const selectedItem = ref({}) // Store selected item details
+
 // Get user info and check if admin
 const getUser = async () => {
   const userMetadata = await getUserInformation()
   isAdmin.value = userMetadata?.is_admin || false
 }
 
-// Method to handle the Order Now button click
-const handleOrderNow = () => {
+// Handle "Order Now" button click
+const handleOrderNow = item => {
   if (!isLoggedIn.value) {
     isLoginModalVisible.value = true
     isRegisterMode.value = false
   } else {
-    // Proceed with the order
-    console.log('Order placed!')
+    // selectedItem.value = item // Set selected item details
+    // isItemsModalVisible.value = true // Open ItemsModal
   }
 }
 
@@ -60,9 +69,36 @@ const foodCategories = [
   'Drinks',
   'Desserts',
 ]
+
+// const foodItems = [
+//   {
+//     name: 'Pork Adebayor',
+//     description: 'Savory pork simmered in soy sauce and vinegar.',
+//     price: 40,
+//     image: '/images/pork-adobo.jpg',
+//   },
+//   {
+//     name: 'Holo Lulo',
+//     description: 'A refreshing dessert with crushed ice and sweet toppings.',
+//     price: 45,
+//     image: '/images/halo-halo2.jpg',
+//   },
+//   // Add more items as needed
+// ]
 </script>
 <template>
-  <AppLayout :is-with-app-bar-nav-icon="false">
+  <AppLayout
+    :is-with-app-bar-nav-icon="true"
+    @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
+  >
+    <!-- Side Navigation -->
+    <template #navigation>
+      <SideNavigation
+        v-if="isAdmin"
+        :is-drawer-visible="isDrawerVisible"
+      ></SideNavigation>
+    </template>
+
     <template #content>
       <v-container>
         <v-row>

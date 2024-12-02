@@ -159,6 +159,7 @@ const toggleFormMode = () => {
         class="font-weight-bold footer-background"
         :class="mobile ? 'text-caption' : ''"
         border
+        app
       >
         <div
           class="py-10"
@@ -225,6 +226,10 @@ const toggleFormMode = () => {
 }
 /* navigation style */
 
+.v-main {
+  --v-layout-bottom: 0px !important; /* Set bottom padding to zero */
+}
+
 /* footer */
 .footer-background {
   position: relative;
@@ -258,6 +263,10 @@ const toggleFormMode = () => {
 .v-footer--border {
   border-width: 0 !important;
   box-shadow: none !important;
+}
+
+.v-footer {
+  position: relative !important; /* Ensures the footer behaves like a normal block */
 }
 /* footer */
 </style>

@@ -5,7 +5,7 @@ import { ref, onMounted } from 'vue'
 import { getUserInformation } from '@/utils/supabase'
 
 // State for drawer visibility
-const isDrawerVisible = ref(true)
+const isDrawerVisible = ref(false)
 
 const isAdmin = ref(false)
 
