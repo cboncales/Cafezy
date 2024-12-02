@@ -29,7 +29,7 @@ const props = defineProps({
               : "Don't have an account?"
           }}
           <span
-            class="text-orange-darken-2 font-weight-black"
+            class="text-orange-darken-2"
             @click="$emit('toggleFormMode')"
             style="cursor: pointer"
           >
