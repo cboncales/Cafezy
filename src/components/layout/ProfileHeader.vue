@@ -59,7 +59,7 @@ onMounted(() => {
 <template>
   <v-menu min-width="200px" rounded>
     <template #activator="{ props }">
-      <v-btn icon v-bind="props">
+      <v-btn class="mx-5" icon v-bind="props">
         <v-avatar color="deep-orange-lighten-1" size="large">
           <span class="text-h5">{{ userData.initials }}</span>
         </v-avatar>

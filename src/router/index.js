@@ -1,7 +1,14 @@
 import { getUserInformation, isAuthenticated } from '@/utils/supabase'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '@/views/auth/HomePage.vue'
+import FoodPage from '@/views/auth/FoodPage.vue'
+import ContactPage from '@/views/auth/ContactPage.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
+import ProductsView from '@/views/system/manage-product/ProductsView.vue'
+import UserView from '@/views/system/manage-user/UserView.vue'
+import ManageOrderView from '@/views/system/manage-order/ManageOrderView.vue'
+import ReportView from '@/views/system/manage-report/ReportView.vue'
+import OrderView from '@/views/system/OrderView.vue'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 
@@ -19,12 +26,54 @@ const router = createRouter({
       component: HomePage,
       meta: { requiresAuth: false },
     },
+    {
+      path: '/food',
+      name: 'food',
+      component: FoodPage,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactPage,
+      meta: { requiresAuth: false },
+    },
 
     // System Pages
     {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/product',
+      name: 'product',
+      component: ProductsView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: UserView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/manage-order',
+      name: 'manage-order',
+      component: ManageOrderView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/report',
+      name: 'report',
+      component: ReportView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/order',
+      name: 'order',
+      component: OrderView,
       meta: { requiresAuth: true },
     },
     // Add More Pages Here
@@ -44,6 +93,14 @@ const router = createRouter({
       component: NotFoundView,
     },
   ],
+
+  // Scroll behavior to always start at the top
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    return { top: 0 }
+  },
 })
 
 router.beforeEach(async to => {
@@ -52,6 +109,11 @@ router.beforeEach(async to => {
   // Redirect to appropriate page if accessing home route
   if (to.name === 'home') {
     return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
+  }
+
+  // Allow public access to FoodPage regardless of login status
+  if (to.name === 'food' || to.name === 'contact') {
+    return true
   }
 
   // Check if the user is logged in

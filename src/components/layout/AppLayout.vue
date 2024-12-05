@@ -1,8 +1,7 @@
 <script setup>
-import { isAuthenticated } from '@/utils/supabase'
+import { isAuthenticated, getUserInformation } from '@/utils/supabase'
 import ProfileHeader from './ProfileHeader.vue'
-import LoginForm from '@/components/auth/LoginForm.vue'
-import RegisterForm from '@/components/auth/RegisterForm.vue'
+import AuthModal from '../auth/AuthModal.vue'
 
 import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
@@ -13,14 +12,20 @@ const emit = defineEmits(['isDrawerVisible'])
 
 const isLoginModalVisible = ref(false)
 const isRegisterMode = ref(false)
+const isAdmin = ref(false)
+//Load Variables
+const isLoggedIn = ref(false)
+
+// Get user info and check if admin
+const getUser = async () => {
+  const userMetadata = await getUserInformation()
+  isAdmin.value = userMetadata?.is_admin || false
+}
 
 //utilize predefined vue functions
 const { mobile } = useDisplay()
 
 // const theme = ref(localStorage.getItem('theme') ?? 'light')
-
-//Load Variables
-const isLoggedIn = ref(false)
 
 //Toggle Theme
 // function onToggleTheme() {
@@ -31,6 +36,11 @@ const isLoggedIn = ref(false)
 //Get Authentication status from supabase
 const getLoggedStatus = async () => {
   isLoggedIn.value = await isAuthenticated()
+  if (isLoggedIn.value) {
+    await getUser() // Fetch user data only if logged in
+  } else {
+    isAdmin.value = false // Reset admin status on logout
+  }
 }
 
 //Load Functions during component rendering
@@ -49,7 +59,7 @@ const toggleFormMode = () => {
     <v-app>
       <v-app-bar class="pa-1" border>
         <v-app-bar-nav-icon
-          v-if="props.isWithAppBarNavIcon"
+          v-if="props.isWithAppBarNavIcon && isAdmin"
           icon="mdi-menu"
           @click="emit('isDrawerVisible')"
         >
@@ -66,15 +76,19 @@ const toggleFormMode = () => {
           >Café<span class="text-logos">zy</span></span
         >
 
-        <v-btn class="nav-btn ml-16" to="">Home</v-btn>
-        <v-btn class="nav-btn mx-2" to="">Food</v-btn>
-        <v-btn class="nav-btn mx-2" to="">Contact Us</v-btn>
+        <v-btn class="nav-btn ml-16" to="/login">Home</v-btn>
+        <v-btn class="nav-btn mx-2" to="/food">Food</v-btn>
+        <v-btn class="nav-btn mx-2" to="/contact">Contact Us</v-btn>
+        <v-btn v-if="isLoggedIn && !isAdmin" class="nav-btn mx-2" to="/order">
+          Orders
+        </v-btn>
 
         <v-spacer></v-spacer>
 
         <ProfileHeader v-if="isLoggedIn"></ProfileHeader>
 
         <v-btn
+          v-if="!isLoggedIn && $route.name !== 'dashboard'"
           class="login-btn mx-2"
           prepend-icon="mdi mdi-login"
           @click="
@@ -87,42 +101,6 @@ const toggleFormMode = () => {
           Log in
         </v-btn>
 
-        <v-dialog v-model="isLoginModalVisible" persistent max-width="400">
-          <v-card>
-            <v-card-title class="text-h5 text-center">
-              {{ isRegisterMode ? 'Register' : 'Log in' }}
-            </v-card-title>
-            <v-card-text>
-              <component :is="isRegisterMode ? RegisterForm : LoginForm" />
-              <v-divider class="my-5"></v-divider>
-
-              <h5 class="text-center">
-                {{
-                  isRegisterMode
-                    ? 'Already have an account?'
-                    : "Don't have an account?"
-                }}
-                <span
-                  class="text-orange-darken-2 font-weight-black"
-                  @click="toggleFormMode"
-                  style="cursor: pointer"
-                >
-                  {{
-                    isRegisterMode
-                      ? 'Click here to Log in'
-                      : 'Click here to Register'
-                  }}
-                </span>
-              </h5>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="grey" text @click="isLoginModalVisible = false">
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
         <span class="line">|</span>
         <div class="me-10">
           <v-btn
@@ -164,6 +142,13 @@ const toggleFormMode = () => {
         ></v-btn> -->
       </v-app-bar>
 
+      <!-- Modals -->
+      <AuthModal
+        v-model:isVisible="isLoginModalVisible"
+        :is-register-mode="isRegisterMode"
+        @toggleFormMode="toggleFormMode"
+      />
+
       <slot name="navigation"></slot>
 
       <v-main>
@@ -171,13 +156,15 @@ const toggleFormMode = () => {
       </v-main>
 
       <v-footer
-        class="font-weight-bold"
+        class="font-weight-bold footer-background"
         :class="mobile ? 'text-caption' : ''"
-        elevation="24"
         border
         app
       >
-        <div :class="mobile ? 'w-100 text-center' : ''">
+        <div
+          class="py-10"
+          :class="mobile ? 'w-100 text-center' : 'w-100 text-center'"
+        >
           Copyright © 2024 - Cafézy | All Rights Reserved
         </div>
       </v-footer>
@@ -190,6 +177,7 @@ const toggleFormMode = () => {
   font-family: 'Quicksand', sans-serif;
 }
 
+/* navigation style */
 .text-logo {
   font-size: 35px;
   font-weight: 900;
@@ -201,13 +189,13 @@ const toggleFormMode = () => {
 }
 
 .nav-btn {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: rgb(82, 80, 80);
 }
 
 .login-btn {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: rgb(82, 80, 80);
 }
@@ -226,10 +214,60 @@ const toggleFormMode = () => {
   background-color: rgba(255, 145, 0, 0.1) !important;
   color: rgb(255, 145, 0) !important;
 }
+::v-deep(.cancel-btn:hover) {
+  background-color: rgba(255, 145, 0, 0.1) !important;
+  color: rgb(255, 145, 0) !important;
+}
 
 .line {
   font-size: 20px;
   font-weight: 800;
   color: rgb(82, 80, 80);
 }
+/* navigation style */
+
+.v-main {
+  --v-layout-bottom: 0px !important; /* Set bottom padding to zero */
+}
+
+/* footer */
+.footer-background {
+  position: relative;
+  background-image: url('/images/footer-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.795);
+  z-index: 1;
+}
+
+.footer-background div {
+  position: relative;
+  z-index: 2;
+}
+
+/* Override the .v-footer--border styles */
+.v-footer--border {
+  border-width: 0 !important;
+  box-shadow: none !important;
+}
+
+.v-footer {
+  position: relative !important;
+  max-height: max-content;
+}
+/* footer */
 </style>

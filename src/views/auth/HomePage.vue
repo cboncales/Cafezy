@@ -1,8 +1,54 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
+import AuthModal from '@/components/auth/AuthModal.vue'
+import { isAuthenticated, getUserInformation } from '@/utils/supabase'
 import { useDisplay } from 'vuetify'
+import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
+
+// State to track if the user is logged in
+const isLoginModalVisible = ref(false)
+const isRegisterMode = ref(false)
+const isLoggedIn = ref(false)
+const isAdmin = ref(false)
+
+// Get user info and check if admin
+const getUser = async () => {
+  const userMetadata = await getUserInformation()
+  isAdmin.value = userMetadata?.is_admin || false
+}
+
+// Method to handle the Order Now button click
+const handleOrderNow = () => {
+  if (!isLoggedIn.value) {
+    isLoginModalVisible.value = true
+    isRegisterMode.value = false
+  } else {
+    // Proceed with the order
+    console.log('Order placed!')
+  }
+}
+
+//Get Authentication status from supabase
+const getLoggedStatus = async () => {
+  isLoggedIn.value = await isAuthenticated()
+  if (isLoggedIn.value) {
+    await getUser() // Fetch user data only if logged in
+  } else {
+    isAdmin.value = false // Reset admin status on logout
+  }
+}
+
+//Load Functions during component rendering
+onMounted(() => {
+  getLoggedStatus()
+})
+
+//Toggle login to register modal
+const toggleFormMode = () => {
+  isRegisterMode.value = !isRegisterMode.value
+}
 
 // Food Categories
 const foodCategories = [
@@ -48,7 +94,7 @@ const foodCategories = [
           <!-- Ordering Section -->
           <v-container>
             <div class="head-container my-16">
-              <h1 class="head-text text-center my-5">Best Seller Foods</h1>
+              <h1 class="head-text text-center my-5">Popular</h1>
               <v-item-group
                 class="text-center"
                 selected-class="bg-orange"
@@ -71,12 +117,25 @@ const foodCategories = [
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/pork-adobo.jpg"
                     alt="chicken adebayor"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Pork Adebayor</h2>
@@ -88,21 +147,31 @@ const foodCategories = [
                     black peppercorns. It's often served with rice and is one of
                     the most popular Filipino comfort foods.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 2 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/halo-halo2.jpg"
                     alt="chicken adebayor"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Holo Lulo</h2>
@@ -114,21 +183,31 @@ const foodCategories = [
                     with leche flan and purple yam (ube). It’s a refreshing
                     treat, especially during hot weather.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 3 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/chicken-curry.jpg"
                     alt="stephen curry"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Stephen Curry</h2>
@@ -140,21 +219,31 @@ const foodCategories = [
                     powder, and mixed with vegetables like potatoes, carrots,
                     and bell peppers. It's a comforting and flavorful dish.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 4 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/paksiw.jpg"
                     alt="pakistan"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Pakistan</h2>
@@ -166,21 +255,31 @@ const foodCategories = [
                     tangy and savory flavor, with a distinct vinegar base that
                     is cooked until tender.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 5 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/mechado.jpg"
                     alt="Makarena"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Makarena</h2>
@@ -192,21 +291,31 @@ const foodCategories = [
                     onions, and potatoes. It has a savory and slightly sweet
                     sauce, often enjoyed with rice.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
-                  </v-card-actions>
                 </v-card>
               </v-col>
               <!-- Card 6 -->
               <v-col cols="12" md="4">
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
-                    class="card-img rounded-xl"
+                    class="card-img rounded-xl hover-image"
                     src="/images/beef-steak.jpg"
                     alt="Biskwit"
                     height="300"
                     cover
                   >
+                    <div class="overlay">
+                      <v-card-actions class="hover-actions">
+                        <v-btn
+                          class="order-btn rounded-pill"
+                          color="white"
+                          block
+                          prepend-icon="mdi mdi-cart"
+                          @click="handleOrderNow"
+                        >
+                          Order Now
+                        </v-btn>
+                      </v-card-actions>
+                    </div>
                   </v-img>
                   <v-card-title>
                     <h2 class="text-center">Biskwit</h2>
@@ -218,15 +327,19 @@ const foodCategories = [
                     is typically cooked with onions and served with a savory,
                     tangy sauce.
                   </v-card-text>
-                  <v-card-actions>
-                    <v-btn color="orange-darken-1" block>Order Now</v-btn>
-                  </v-card-actions>
                 </v-card>
               </v-col>
             </v-row>
           </v-container>
         </v-row>
       </v-container>
+
+      <!-- Auth Modal -->
+      <AuthModal
+        v-model:isVisible="isLoginModalVisible"
+        :is-register-mode="isRegisterMode"
+        @toggleFormMode="toggleFormMode"
+      />
     </template>
   </AppLayout>
 </template>
@@ -326,7 +439,49 @@ h3 {
 }
 
 .ordering-card {
+  position: relative;
   margin-bottom: 20px;
+}
+
+.ordering-card h2,
+.ordering-card h3 {
+  color: rgb(82, 80, 80);
+}
+
+.hover-image {
+  position: relative;
+  transition: filter 0.3s ease;
+}
+
+.hover-image:hover {
+  filter: brightness(0.7);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.hover-image:hover .overlay {
+  opacity: 1;
+}
+
+.hover-actions {
+  z-index: 2;
+}
+
+.order-btn {
+  background-color: #000;
 }
 
 /* Ordering Section */
