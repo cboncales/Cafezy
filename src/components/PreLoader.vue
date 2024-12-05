@@ -3,8 +3,6 @@
     <div class="burger">
       <div class="bun top"></div>
       <div class="patty"></div>
-      <div class="cheese"></div>
-      <div class="lettuce"></div>
       <div class="bun bottom"></div>
     </div>
   </div>
@@ -13,62 +11,51 @@
 <script setup></script>
 
 <style scoped>
+/* Add your preloader styles (same as before) */
 .preloader {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #f8f8f8;
 }
 
 .burger {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: stack 2s infinite;
+  gap: 5px;
+  animation: stackBurger 2s ease-in-out forwards;
 }
 
 .bun,
-.patty,
-.cheese,
-.lettuce {
+.patty {
   width: 100px;
   height: 20px;
-  margin: 5px 0;
+  background-color: #d35400;
   border-radius: 5px;
 }
 
-.bun {
-  background-color: #f39c12;
-}
-
 .bun.top {
-  border-radius: 50px 50px 10px 10px;
+  background-color: #e67e22;
 }
 
 .bun.bottom {
-  border-radius: 10px 10px 50px 50px;
+  background-color: #e67e22;
 }
 
 .patty {
-  background-color: #6f4e37;
+  background-color: #c0392b;
 }
 
-.cheese {
-  background-color: #f1c40f;
-}
-
-.lettuce {
-  background-color: #27ae60;
-}
-
-@keyframes stack {
-  0%,
+@keyframes stackBurger {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
   100% {
     transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
+    opacity: 1;
   }
 }
 </style>
