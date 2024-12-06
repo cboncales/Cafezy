@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import SettingsModal from '@/components/SettingsModal.vue' // Import the modal
+import SettingsModal from './SettingsModal.vue'
 import {
   supabase,
   formActionDefault,
@@ -60,7 +60,7 @@ const openSettingsModal = () => {
 <template>
   <v-menu min-width="200px" rounded>
     <template #activator="{ props }">
-      <v-btn icon v-bind="props">
+      <v-btn class="mx-5" icon v-bind="props">
         <v-avatar color="deep-orange-lighten-1" size="large">
           <span class="text-h5">{{ userData.initials }}</span>
         </v-avatar>
@@ -100,5 +100,5 @@ const openSettingsModal = () => {
   </v-menu>
 
   <!-- Import and control modal visibility -->
-  <SettingsModal v-model="isSettingsModalVisible" />
+  <SettingsModal v-model:isVisible="isSettingsModalVisible" />
 </template>
