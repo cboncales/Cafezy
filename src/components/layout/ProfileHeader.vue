@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+import SettingsModal from './SettingsModal.vue'
 import {
   supabase,
   formActionDefault,
@@ -6,26 +8,24 @@ import {
 } from '@/utils/supabase'
 import { getAvatarText } from '@/utils/helpers'
 import { useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
 
-// Utilize pre-defined vue functions
-const router = useRouter()
+// Define state for modal visibility
+const isSettingsModalVisible = ref(false)
 
-// Load Variables
+// Define user data state
 const userData = ref({
   initials: '',
   email: '',
   fullname: '',
 })
 
-const formAction = ref({
-  ...formActionDefault,
-})
+const formAction = ref({ ...formActionDefault })
 
-// Logout Functionality
+const router = useRouter()
+
+// Logout functionality
 const onLogout = async () => {
   formAction.value = { ...formActionDefault }
-
   formAction.value.formProcess = true
 
   // Get supabase logout functionality
@@ -35,25 +35,26 @@ const onLogout = async () => {
     return
   }
   formAction.value.formProcess = false
-  // Redirect to homepage
   router.replace('/')
 }
 
-// Getting User Information Functionality
+// Getting user information functionality
 const getUser = async () => {
-  // Retrieve User Information
   const userMetadata = await getUserInformation()
-
-  // Assign the retrieved informations
   userData.value.email = userMetadata.email
   userData.value.fullname = userMetadata.firstname + ' ' + userMetadata.lastname
   userData.value.initials = getAvatarText(userData.value.fullname)
 }
 
-// Load Functions during component rendering
+// Load functions during component rendering
 onMounted(() => {
   getUser()
 })
+
+// Open modal for account settings
+const openSettingsModal = () => {
+  isSettingsModalVisible.value = true
+}
 </script>
 
 <template>
@@ -77,7 +78,11 @@ onMounted(() => {
           </v-list-item>
         </v-list>
         <v-divider class="my-3"></v-divider>
-        <v-btn prepend-icon="mdi-wrench" variant="plain">
+        <v-btn
+          prepend-icon="mdi-wrench"
+          variant="plain"
+          @click="openSettingsModal"
+        >
           Account Settings
         </v-btn>
         <v-divider class="my-3"></v-divider>
@@ -93,4 +98,7 @@ onMounted(() => {
       </v-card-text>
     </v-card>
   </v-menu>
+
+  <!-- Import and control modal visibility -->
+  <SettingsModal v-model:isVisible="isSettingsModalVisible" />
 </template>
