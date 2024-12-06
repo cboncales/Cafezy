@@ -1,6 +1,7 @@
 <script setup>
 const props = defineProps({
   isVisible: Boolean,
+  userData: Object,
 })
 </script>
 
@@ -21,7 +22,7 @@ const props = defineProps({
           md="6"
         >
           <v-avatar class="my-2" color="deep-orange-lighten-1" size="large">
-            <span class="text-h5">CB</span>
+            <span class="text-h5">{{ userData.initials }}</span>
           </v-avatar>
           <v-btn variant="plain" class="my-5 w-100">Edit Profile</v-btn>
         </v-col>
@@ -30,9 +31,10 @@ const props = defineProps({
           cols="12"
           md="6"
         >
-          <p class="text-center text-h6 my-2">Clark Boncales</p>
-          <p class="text-center my-2">clarkboncales115@gmail.com</p>
-          <v-btn variant="plain" class="my-5 w-100"> Change Password</v-btn>
+          <p class="text-center text-h6 my-2">{{ userData.fullname }}</p>
+          <p class="text-center my-2">{{ userData.email }}</p>
+
+          <v-btn variant="plain" class="my-5 w-100">Change Password</v-btn>
         </v-col>
       </v-row>
       <v-divider></v-divider>
@@ -42,8 +44,9 @@ const props = defineProps({
           color="orange-darken-2"
           text
           @click="$emit('update:isVisible', false)"
-          >Close</v-btn
         >
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

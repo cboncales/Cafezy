@@ -100,5 +100,8 @@ const openSettingsModal = () => {
   </v-menu>
 
   <!-- Import and control modal visibility -->
-  <SettingsModal v-model:isVisible="isSettingsModalVisible" />
+  <SettingsModal
+    v-model:isVisible="isSettingsModalVisible"
+    :userData="userData"
+  />
 </template>
