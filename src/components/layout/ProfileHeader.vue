@@ -1,5 +1,6 @@
 <script setup>
-// Imports
+import { ref, onMounted } from 'vue'
+import SettingsModal from '@/components/SettingsModal.vue' // Import the modal
 import {
   supabase,
   formActionDefault,
@@ -7,29 +8,27 @@ import {
 } from '@/utils/supabase'
 import { getAvatarText } from '@/utils/helpers'
 import { useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
 
-// Router
-const router = useRouter()
+// Define state for modal visibility
+const isSettingsModalVisible = ref(false)
 
-// Reactive Variables
+// Define user data state
 const userData = ref({
   initials: '',
   email: '',
   fullname: '',
 })
+
 const formAction = ref({ ...formActionDefault })
 
-// Functions
-const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  userData.value.email = userMetadata.email
-  userData.value.fullname = `${userMetadata.firstname} ${userMetadata.lastname}`
-  userData.value.initials = getAvatarText(userData.value.fullname)
-}
+const router = useRouter()
 
+// Logout functionality
 const onLogout = async () => {
+  formAction.value = { ...formActionDefault }
   formAction.value.formProcess = true
+
+  // Get supabase logout functionality
   const { error } = await supabase.auth.signOut()
   if (error) {
     console.error('Error during logout:', error)
@@ -39,84 +38,67 @@ const onLogout = async () => {
   router.replace('/')
 }
 
-// Lifecycle Hook
+// Getting user information functionality
+const getUser = async () => {
+  const userMetadata = await getUserInformation()
+  userData.value.email = userMetadata.email
+  userData.value.fullname = userMetadata.firstname + ' ' + userMetadata.lastname
+  userData.value.initials = getAvatarText(userData.value.fullname)
+}
+
+// Load functions during component rendering
 onMounted(() => {
   getUser()
 })
+
+// Open modal for account settings
+const openSettingsModal = () => {
+  isSettingsModalVisible.value = true
+}
 </script>
 
 <template>
-  <v-menu min-width="350px" rounded>
+  <v-menu min-width="200px" rounded>
     <template #activator="{ props }">
-      <v-btn class="mx-5" icon v-bind="props">
+      <v-btn icon v-bind="props">
         <v-avatar color="deep-orange-lighten-1" size="large">
           <span class="text-h5">{{ userData.initials }}</span>
         </v-avatar>
       </v-btn>
     </template>
-    <v-card class="mt-2" elevation="3">
+    <v-card class="mt-1">
       <v-card-text>
-        <v-row align="center">
-          <!-- Profile Picture -->
-          <v-col cols="4" class="text-center">
-            <v-avatar color="deep-orange-lighten-1" size="x-large">
-              <span class="text-h5">{{ userData.initials }}</span>
-            </v-avatar>
-          </v-col>
-          <!-- Profile Info -->
-          <v-col cols="8">
-            <v-btn
-              prepend-icon="mdi-pencil"
-              variant="outlined"
-              color="primary"
-              class="mb-3"
-              block
-            >
-              Edit Profile
-            </v-btn>
-            <div class="profile-details">
-              <h3 class="mb-1">{{ userData.fullname }}</h3>
-              <p class="text-secondary">{{ userData.email }}</p>
-            </div>
-          </v-col>
-        </v-row>
+        <v-list>
+          <v-list-item :subtitle="userData.email" :title="userData.fullname">
+            <template #prepend>
+              <v-avatar color="deep-orange-lighten-1" size="large">
+                <span class="text-h5">{{ userData.initials }}</span>
+              </v-avatar>
+            </template>
+          </v-list-item>
+        </v-list>
         <v-divider class="my-3"></v-divider>
-        <!-- Change Password Button -->
-        <v-btn prepend-icon="mdi-lock" variant="outlined" class="mb-3" block>
-          Change Password
+        <v-btn
+          prepend-icon="mdi-wrench"
+          variant="plain"
+          @click="openSettingsModal"
+        >
+          Account Settings
         </v-btn>
         <v-divider class="my-3"></v-divider>
-        <!-- Logout Button -->
         <v-btn
           prepend-icon="mdi-logout"
-          color="error"
-          variant="outlined"
+          variant="plain"
           @click="onLogout"
           :loading="formAction.formProcess"
           :disabled="formAction.formProcess"
-          block
         >
           Logout
         </v-btn>
       </v-card-text>
     </v-card>
   </v-menu>
+
+  <!-- Import and control modal visibility -->
+  <SettingsModal v-model="isSettingsModalVisible" />
 </template>
-
-<style scoped>
-.profile-details h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-.profile-details p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: gray;
-}
-
-.v-btn {
-  text-transform: none;
-}
-</style>
