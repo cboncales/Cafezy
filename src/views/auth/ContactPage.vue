@@ -13,8 +13,20 @@ const isDrawerVisible = ref(false)
 const isAdmin = ref(false)
 
 const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  isAdmin.value = userMetadata?.is_admin || false
+  try {
+    const userMetadata = await getUserInformation()
+
+    // Check if userMetadata exists before accessing properties
+    if (userMetadata) {
+      isAdmin.value = userMetadata.is_admin || false
+    } else {
+      console.warn('User metadata is null or undefined.')
+      isAdmin.value = false
+    }
+  } catch (error) {
+    console.error('Failed to fetch user information:', error)
+    isAdmin.value = false
+  }
 }
 
 onMounted(() => {

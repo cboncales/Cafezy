@@ -28,11 +28,30 @@ export const isAuthenticated = async () => {
 
 // Retrieve user information
 export const getUserInformation = async () => {
-  const {
-    data: {
-      user: { user_metadata },
-    },
-  } = await supabase.auth.getUser()
+  try {
+    // Check if the session exists
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getSession()
 
-  return user_metadata
+    if (sessionError || !sessionData.session) {
+      console.warn(
+        'No active session found:',
+        sessionError?.message || 'Session is null',
+      )
+      return null // Return null if no session exists
+    }
+
+    // Get user information
+    const { data, error } = await supabase.auth.getUser()
+
+    if (error) {
+      console.error('Error fetching user:', error.message)
+      return null
+    }
+
+    return data.user?.user_metadata || {} // Return user metadata or an empty object
+  } catch (err) {
+    console.error('Unexpected error in getUserInformation:', err)
+    return null
+  }
 }
