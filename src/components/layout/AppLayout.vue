@@ -317,6 +317,11 @@ const toggleFormMode = () => {
   color: rgb(255, 145, 0) !important;
 }
 
+::v-deep(.cancel-btn:hover) {
+  background-color: rgba(255, 145, 0, 0.1) !important;
+  color: rgb(255, 145, 0) !important;
+}
+
 .line {
   font-size: 20px;
   font-weight: 800;
@@ -355,6 +360,15 @@ const toggleFormMode = () => {
 .v-footer {
   position: relative !important;
   max-height: max-content;
+}
+
+.v-footer--border {
+  border-width: 0 !important;
+  box-shadow: none !important;
+}
+
+.v-main {
+  --v-layout-bottom: 0px !important; /* Set bottom padding to zero */
 }
 
 /* Responsive Styles */
