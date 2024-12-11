@@ -73,6 +73,7 @@ const { mobile } = useDisplay()
 const isDrawerVisible = ref(props.isDrawerVisible)
 watch(props, () => {
   isDrawerVisible.value = props.isDrawerVisible
+  console.log('Drawer visibility updated:', isDrawerVisible.value)
 })
 
 // Navigation items
