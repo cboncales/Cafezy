@@ -2,7 +2,7 @@
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref, onMounted } from 'vue'
-import { getUserInformation } from '@/utils/supabase'
+import { isAuthenticated, getUserInformation } from '@/utils/supabase'
 import { useDisplay } from 'vuetify'
 
 const { mobile } = useDisplay()
@@ -10,27 +10,27 @@ const { mobile } = useDisplay()
 // State for drawer visibility
 const isDrawerVisible = ref(false)
 
+const isLoggedIn = ref(false)
 const isAdmin = ref(false)
 
+// Get user info and check if admin
 const getUser = async () => {
-  try {
-    const userMetadata = await getUserInformation()
+  const userMetadata = await getUserInformation()
+  isAdmin.value = userMetadata?.is_admin || false
+}
 
-    // Check if userMetadata exists before accessing properties
-    if (userMetadata) {
-      isAdmin.value = userMetadata.is_admin || false
-    } else {
-      console.warn('User metadata is null or undefined.')
-      isAdmin.value = false
-    }
-  } catch (error) {
-    console.error('Failed to fetch user information:', error)
-    isAdmin.value = false
+//Get Authentication status from supabase
+const getLoggedStatus = async () => {
+  isLoggedIn.value = await isAuthenticated()
+  if (isLoggedIn.value) {
+    await getUser() // Fetch user data only if logged in
+  } else {
+    isAdmin.value = false // Reset admin status on logout
   }
 }
 
 onMounted(() => {
-  getUser()
+  getLoggedStatus()
 })
 </script>
 
