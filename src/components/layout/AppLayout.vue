@@ -58,9 +58,8 @@ const toggleFormMode = () => {
             :justify="mobile ? 'space-between' : 'space-between'"
           >
             <!-- Navigation Icon -->
-            <v-col cols="auto" v-if="isAdmin || !mobile">
+            <v-col cols="auto" v-if="props.isWithAppBarNavIcon && isAdmin">
               <v-app-bar-nav-icon
-                v-if="props.isWithAppBarNavIcon && isAdmin"
                 icon="mdi-menu"
                 @click="emit('isDrawerVisible')"
               ></v-app-bar-nav-icon>
