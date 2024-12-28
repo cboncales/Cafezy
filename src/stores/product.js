@@ -6,16 +6,20 @@ import { useAuthUserStore } from './authUser'
 
 export const useProductsStore = defineStore('products', () => {
   const authStore = useAuthUserStore()
-  //States
+  // States
   const productsFromApi = ref([])
   const products = ref([])
-
-  // Getter
-  // const sample = computed(() => count.value * 2)
 
   // Actions
   // Retrieve from API and insert more to products table in Supabase
   async function getProductsFromApi() {
+    // Ensure user is authenticated
+    if (!authStore.userData || !authStore.userData.id) {
+      console.error("User is not authenticated or user data is missing.");
+      return;
+    }
+    
+    // Fetch products from API
     const response = await axios.get('https://api.restful-api.dev/objects')
 
     productsFromApi.value = response.data
@@ -25,19 +29,29 @@ export const useProductsStore = defineStore('products', () => {
         name: product.name,
         description: product.data?.Description ?? '', 
         price: product.data?.Price ?? 0,
-        user_id: authStore.userData.id
+        user_id: authStore.userData.id,
       }
     })
 
-    const { data } = await supabase .from('products') .insert(transformedProducts) .select()
-    console.log(data)
+    // Insert products into Supabase
+    const { data, error } = await supabase.from('products').insert(transformedProducts).select()
+
+    if (error) {
+      console.error("Error inserting products:", error);
+    } else {
+      console.log("Inserted products:", data)
+    }
   }
 
-  // Retrieve from Supabase
+  // Retrieve products from Supabase
   async function getProducts() {
-    const { data } = await supabase .from('products') .select('*')
+    const { data, error } = await supabase.from('products').select('*')
 
-    products.value = data
+    if (error) {
+      console.error("Error retrieving products:", error);
+    } else {
+      products.value = data
+    }
   }
 
   return { productsFromApi, products, getProductsFromApi, getProducts }
