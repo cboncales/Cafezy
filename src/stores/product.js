@@ -10,6 +10,12 @@ export const useProductsStore = defineStore('products', () => {
   const productsFromApi = ref([])
   const products = ref([])
 
+  // Reset State Action
+  function $reset() {
+    productsFromApi.value = []
+    products.value = []
+  }
+
   // Actions
   // Retrieve from API and insert more to products table in Supabase
   async function getProductsFromApi() {
@@ -23,6 +29,10 @@ export const useProductsStore = defineStore('products', () => {
     const response = await axios.get('https://api.restful-api.dev/objects')
 
     productsFromApi.value = response.data
+
+    
+    await supabase .from('products') .delete() .neq('id', 0)
+        
 
     const transformedProducts = response.data.map(product => {
       return {
@@ -41,6 +51,8 @@ export const useProductsStore = defineStore('products', () => {
     } else {
       console.log("Inserted products:", data)
     }
+
+    if (data) await getProducts()
   }
 
   // Retrieve products from Supabase
@@ -54,5 +66,5 @@ export const useProductsStore = defineStore('products', () => {
     }
   }
 
-  return { productsFromApi, products, getProductsFromApi, getProducts }
+  return { productsFromApi, products, $reset, getProductsFromApi, getProducts }
 })
