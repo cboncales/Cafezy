@@ -1,5 +1,5 @@
 <script setup>
-import { isAuthenticated, getUserInformation } from '@/utils/supabase'
+import { useAuthUserStore } from '@/stores/authUser'
 import ProfileHeader from './ProfileHeader.vue'
 import AuthModal from '../auth/AuthModal.vue'
 
@@ -7,45 +7,41 @@ import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
 const props = defineProps(['isWithAppBarNavIcon'])
-
 const emit = defineEmits(['isDrawerVisible'])
+
+const authUser = useAuthUserStore()
+const isAdmin = ref(false)
+const isLoggedIn = ref(false)
 const isDrawerOpen = ref(false)
 
 const isLoginModalVisible = ref(false)
 const isRegisterMode = ref(false)
-const isAdmin = ref(false)
-// Load Variables
-const isLoggedIn = ref(false)
 
-// Get user info and check if admin
-const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  isAdmin.value = userMetadata?.is_admin || false
-}
-
-// Utilize predefined Vue functions
 const { mobile } = useDisplay()
 
-// Get Authentication status from supabase
+// Get Authentication status and user data
 const getLoggedStatus = async () => {
-  isLoggedIn.value = await isAuthenticated()
+  isLoggedIn.value = await authUser.isAuthenticated()
+
   if (isLoggedIn.value) {
-    await getUser() // Fetch user data only if logged in
+    await authUser.getUserInformation()
+    isAdmin.value = authUser.userData?.is_admin || false
   } else {
-    isAdmin.value = false // Reset admin status on logout
+    isAdmin.value = false
+    authUser.$reset()
   }
 }
-
-// Load Functions during component rendering
-onMounted(() => {
-  getLoggedStatus()
-})
 
 // Toggle login to register modal
 const toggleFormMode = () => {
   isRegisterMode.value = !isRegisterMode.value
 }
+
+onMounted(() => {
+  getLoggedStatus()
+})
 </script>
+
 
 <template>
   <v-responsive>

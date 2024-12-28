@@ -2,21 +2,28 @@
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref, onMounted } from 'vue'
-import { getUserInformation } from '@/utils/supabase'
+import { useAuthUserStore } from '@/stores/authUser'
+
+// Use the authUser store
+const authUser = useAuthUserStore()
 
 // State for drawer visibility
 const isDrawerVisible = ref(false)
 
+// Track admin status
 const isAdmin = ref(false)
 
-const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  isAdmin.value = userMetadata?.is_admin || false
+// Retrieve admin status from user data
+const getUserStatus = async () => {
+  const loggedIn = await authUser.isAuthenticated()
+  if (loggedIn) {
+    await authUser.getUserInformation()
+    isAdmin.value = authUser.userData?.is_admin || false
+  } else {
+    isAdmin.value = false
+    authUser.$reset()
+  }
 }
-
-onMounted(() => {
-  getUser()
-})
 
 // Food Categories
 const foodCategories = [
@@ -37,7 +44,12 @@ const slides = [
   '/images/food4.png',
   '/images/food5.png',
 ]
+
+onMounted(() => {
+  getUserStatus()
+})
 </script>
+
 
 <template>
   <AppLayout

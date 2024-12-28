@@ -2,30 +2,27 @@
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref, onMounted } from 'vue'
-import { isAuthenticated, getUserInformation } from '@/utils/supabase'
+import { useAuthUserStore } from '@/stores/authUser'
 import { useDisplay } from 'vuetify'
 
 const { mobile } = useDisplay()
+const authUser = useAuthUserStore()
 
 // State for drawer visibility
 const isDrawerVisible = ref(false)
 
-const isLoggedIn = ref(false)
+// Track admin status
 const isAdmin = ref(false)
 
-// Get user info and check if admin
-const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  isAdmin.value = userMetadata?.is_admin || false
-}
-
-//Get Authentication status from supabase
+// Get user authentication status and admin role
 const getLoggedStatus = async () => {
-  isLoggedIn.value = await isAuthenticated()
-  if (isLoggedIn.value) {
-    await getUser() // Fetch user data only if logged in
+  const loggedIn = await authUser.isAuthenticated()
+  if (loggedIn) {
+    await authUser.getUserInformation()
+    isAdmin.value = authUser.userData?.is_admin || false
   } else {
-    isAdmin.value = false // Reset admin status on logout
+    isAdmin.value = false
+    authUser.$reset()
   }
 }
 
@@ -33,6 +30,7 @@ onMounted(() => {
   getLoggedStatus()
 })
 </script>
+
 
 <template>
   <AppLayout

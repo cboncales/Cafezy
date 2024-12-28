@@ -1,5 +1,6 @@
-import { getUserInformation, isAuthenticated } from '@/utils/supabase'
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthUserStore } from '@/stores/authUser'
+
 import HomePage from '@/views/system/HomePage.vue'
 import FoodPage from '@/views/auth/FoodPage.vue'
 import ContactPage from '@/views/auth/ContactPage.vue'
@@ -76,12 +77,7 @@ const router = createRouter({
       component: OrderView,
       meta: { requiresAuth: true },
     },
-    // Add More Pages Here
-    // {
-    //   path: '/system/sample-page',
-    //   name: 'sample-page',
-    //   component: sample-page
-    // },
+
     // Errors Pages
     {
       path: '/forbidden',
@@ -104,51 +100,38 @@ const router = createRouter({
 })
 
 router.beforeEach(async to => {
-  const isLoggedIn = await isAuthenticated()
+  const authUser = useAuthUserStore()
+  const isLoggedIn = await authUser.isAuthenticated()
 
   // Redirect to appropriate page if accessing home route
   if (to.name === 'home') {
     return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
   }
 
-  // Allow public access to FoodPage regardless of login status
+  // Allow public access to FoodPage and ContactPage regardless of login status
   if (to.name === 'food' || to.name === 'contact') {
     return true
   }
 
-  // Check if the user is logged in
+  // If logged in, redirect to dashboard when accessing login page
   if (isLoggedIn && !to.meta.requiresAuth) {
-    // redirect the user to the dashboard page
     return { name: 'dashboard' }
   }
 
-  // If not logged in and going to system pages
+  // If not logged in and trying to access protected routes
   if (!isLoggedIn && to.meta.requiresAuth) {
-    // redirect the user to the login page
     return { name: 'login' }
   }
 
-  // Check if the user is logged in
+  // If logged in, check user roles for restricted routes
   if (isLoggedIn) {
-    // Retrieve information
-    const userMetadata = await getUserInformation()
-
-    // Get the user role
-    const isAdmin = userMetadata.is_admin
-
-    // remove this comment if not need; Boolean Approach
-    // const isCashier = userMetadata.is_cashier
-    // remove this comment if not need; String Approach
-    // const isCashier = userMetadata.role === 'Cashier'
+    await authUser.getUserInformation()
+    const isAdmin = authUser.userData?.is_admin || false
 
     // Restrict access to admin-only routes
     if (!isAdmin && to.meta.requiresAdmin) {
       return { name: 'forbidden' }
     }
-
-    // Add conditions here if needed
-    // if(isCashier) {
-    // }
   }
 
   // Redirect to 404 Not Found if the route does not exist
