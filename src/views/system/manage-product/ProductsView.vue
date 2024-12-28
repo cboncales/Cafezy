@@ -59,7 +59,7 @@ const openForm = (product = null) => {
 }
 
 const onRetrieveFromApi = async () => {
-  await productStore.getItemsFromApi()
+  await productStore.getProductsFromApi()
 }
 
 const closeForm = () => {
