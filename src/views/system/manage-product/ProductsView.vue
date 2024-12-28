@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import ProductsTable from '@/components/system/manage-products/ProductsTable.vue'
+import { useProductsStore } from '@/stores/product'
 
 const { mobile } = useDisplay()
 
@@ -46,6 +47,7 @@ const products = ref([
   },
 ])
 
+const productStore = useProductsStore()
 const selectedProduct = ref({})
 const isFormVisible = ref(false)
 
@@ -56,9 +58,17 @@ const openForm = (product = null) => {
   isFormVisible.value = true
 }
 
+const onRetrieveFromApi = async () => {
+  await productStore.getItemsFromApi()
+}
+
 const closeForm = () => {
   isFormVisible.value = false
 }
+
+onMounted(async () => {
+  if (productStore.products.length === 0) await productStore.getProducts()
+})
 </script>
 
 <template>
@@ -114,7 +124,7 @@ const closeForm = () => {
             >
           </v-col>
           <v-col cols="12" sm="1">
-            <v-btn class="my-5" variant="elevated" density="comfortable" icon>
+            <v-btn class="my-5" variant="elevated" density="comfortable" @click="onRetrieveFromApi" icon>
               <v-icon icon="mdi-refresh"></v-icon>
             </v-btn>
           </v-col>
