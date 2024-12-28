@@ -1,27 +1,23 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
-import { isAuthenticated, getUserInformation } from '@/utils/supabase'
+import { useAuthUserStore } from '@/stores/authUser'
 import { useDisplay } from 'vuetify'
 import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
 
-// State to track if the user is logged in
+// Use the authUser store
+const authUser = useAuthUserStore()
+
+// State
 const isLoginModalVisible = ref(false)
 const isRegisterMode = ref(false)
-const isLoggedIn = ref(false)
 const isAdmin = ref(false)
 
-// Get user info and check if admin
-const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  isAdmin.value = userMetadata?.is_admin || false
-}
-
-// Method to handle the Order Now button click
+// Handle the Order Now button click
 const handleOrderNow = () => {
-  if (!isLoggedIn.value) {
+  if (!authUser.userData) {
     isLoginModalVisible.value = true
     isRegisterMode.value = false
   } else {
@@ -30,25 +26,27 @@ const handleOrderNow = () => {
   }
 }
 
-//Get Authentication status from supabase
+// Get Authentication status and user data
 const getLoggedStatus = async () => {
-  isLoggedIn.value = await isAuthenticated()
-  if (isLoggedIn.value) {
-    await getUser() // Fetch user data only if logged in
+  const loggedIn = await authUser.isAuthenticated()
+  if (loggedIn) {
+    await authUser.getUserInformation()
+    isAdmin.value = authUser.userData?.is_admin || false
   } else {
-    isAdmin.value = false // Reset admin status on logout
+    isAdmin.value = false
+    authUser.$reset()
   }
 }
 
-//Load Functions during component rendering
-onMounted(() => {
-  getLoggedStatus()
-})
-
-//Toggle login to register modal
+// Toggle login to register modal
 const toggleFormMode = () => {
   isRegisterMode.value = !isRegisterMode.value
 }
+
+// Load Functions during component rendering
+onMounted(() => {
+  getLoggedStatus()
+})
 
 // Food Categories
 const foodCategories = [
@@ -61,6 +59,7 @@ const foodCategories = [
   'Desserts',
 ]
 </script>
+
 
 <template>
   <AppLayout :is-with-app-bar-nav-icon="false">

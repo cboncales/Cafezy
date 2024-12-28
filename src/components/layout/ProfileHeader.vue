@@ -1,32 +1,25 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import SettingsModal from './SettingsModal.vue'
-import {
-  supabase,
-  formActionDefault,
-  getUserInformation,
-} from '@/utils/supabase'
+import { supabase, formActionDefault } from '@/utils/supabase'
 import { getAvatarText } from '@/utils/helpers'
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useAuthUserStore } from '@/stores/authUser'
 
-// Define state for modal visibility
-const isSettingsModalVisible = ref(false)
-
-// Define user data state
-const userData = ref({
-  initials: '',
-  email: '',
-  fullname: '',
-})
-
-const formAction = ref({ ...formActionDefault })
-
+// Utilize pre-defined vue functions
 const router = useRouter()
 
-// Logout functionality
+// Use Pinia Store
+const authStore = useAuthUserStore()
+
+// Load Variables
+const formAction = ref({
+  ...formActionDefault
+})
+
+// Logout Functionality
 const onLogout = async () => {
-  formAction.value = { ...formActionDefault }
-  formAction.value.formProcess = true
+  /// Reset Form Action utils; Turn on processing at the same time
+  formAction.value = { ...formActionDefault, formProcess: true }
 
   // Get supabase logout functionality
   const { error } = await supabase.auth.signOut()
@@ -34,58 +27,72 @@ const onLogout = async () => {
     console.error('Error during logout:', error)
     return
   }
+
   formAction.value.formProcess = false
+  // Reset State
+  setTimeout(() => {
+    authStore.$reset()
+  }, 2500)
+  // Redirect to homepage
   router.replace('/')
-}
-
-// Getting user information functionality
-const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  userData.value.email = userMetadata.email
-  userData.value.fullname = userMetadata.firstname + ' ' + userMetadata.lastname
-  userData.value.initials = getAvatarText(userData.value.fullname)
-}
-
-// Load functions during component rendering
-onMounted(() => {
-  getUser()
-})
-
-// Open modal for account settings
-const openSettingsModal = () => {
-  isSettingsModalVisible.value = true
 }
 </script>
 
 <template>
   <v-menu min-width="200px" rounded>
     <template #activator="{ props }">
-      <v-btn class="mx-5" icon v-bind="props">
-        <v-avatar color="deep-orange-lighten-1" size="large">
-          <span class="text-h5">{{ userData.initials }}</span>
+      <v-btn icon v-bind="props">
+        <v-avatar
+          v-if="authStore.userData.image_url"
+          :image="authStore.userData.image_url"
+          color="orange-darken-3"
+          size="large"
+        >
+        </v-avatar>
+
+        <v-avatar v-else color="orange-darken-3" size="large">
+          <span class="text-h5">
+            {{ getAvatarText(authStore.userData.firstname + ' ' + authStore.userData.lastname) }}
+          </span>
         </v-avatar>
       </v-btn>
     </template>
+
     <v-card class="mt-1">
       <v-card-text>
         <v-list>
-          <v-list-item :subtitle="userData.email" :title="userData.fullname">
+          <v-list-item
+            :subtitle="authStore.userData.email"
+            :title="authStore.userData.firstname + ' ' + authStore.userData.lastname"
+          >
             <template #prepend>
-              <v-avatar color="deep-orange-lighten-1" size="large">
-                <span class="text-h5">{{ userData.initials }}</span>
+              <v-avatar
+                v-if="authStore.userData.image_url"
+                :image="authStore.userData.image_url"
+                color="orange-darken-3"
+                size="large"
+              >
+              </v-avatar>
+
+              <v-avatar v-else color="orange-darken-3" size="large">
+                <span class="text-h5">
+                  {{
+                    getAvatarText(authStore.userData.firstname + ' ' + authStore.userData.lastname)
+                  }}
+                </span>
               </v-avatar>
             </template>
           </v-list-item>
         </v-list>
+
         <v-divider class="my-3"></v-divider>
-        <v-btn
-          prepend-icon="mdi-wrench"
-          variant="plain"
-          @click="openSettingsModal"
-        >
+
+        <v-btn prepend-icon="mdi-wrench" variant="plain" to="/account/settings">
           Account Settings
         </v-btn>
+
         <v-divider class="my-3"></v-divider>
+
         <v-btn
           prepend-icon="mdi-logout"
           variant="plain"
@@ -98,10 +105,4 @@ const openSettingsModal = () => {
       </v-card-text>
     </v-card>
   </v-menu>
-
-  <!-- Import and control modal visibility -->
-  <SettingsModal
-    v-model:isVisible="isSettingsModalVisible"
-    :userData="userData"
-  />
 </template>

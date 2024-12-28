@@ -2,62 +2,55 @@
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
-// import ItemsModal from '@/components/layout/ItemsModal.vue'
-import { isAuthenticated, getUserInformation } from '@/utils/supabase'
+import { useAuthUserStore } from '@/stores/authUser'
 import { useDisplay } from 'vuetify'
 import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
 
+// Use the authUser store
+const authUser = useAuthUserStore()
+
 // State for drawer visibility
 const isDrawerVisible = ref(false)
 
-// State to track if the user is logged in
+// State to track modal visibility
 const isLoginModalVisible = ref(false)
 const isRegisterMode = ref(false)
-const isLoggedIn = ref(false)
 const isAdmin = ref(false)
 
-// For Items Modal
-// const isItemsModalVisible = ref(false) // Visibility of ItemsModal
-// const selectedItem = ref({}) // Store selected item details
-
-// Get user info and check if admin
-const getUser = async () => {
-  const userMetadata = await getUserInformation()
-  isAdmin.value = userMetadata?.is_admin || false
-}
-
 // Handle "Order Now" button click
-const handleOrderNow = item => {
-  if (!isLoggedIn.value) {
+const handleOrderNow = (item) => {
+  if (!authUser.userData) {
     isLoginModalVisible.value = true
     isRegisterMode.value = false
   } else {
-    // selectedItem.value = item // Set selected item details
-    // isItemsModalVisible.value = true // Open ItemsModal
+    // Implement the logic for processing the item order
+    console.log('Order placed for:', item)
   }
 }
 
-//Get Authentication status from supabase
+// Get Authentication status and user data
 const getLoggedStatus = async () => {
-  isLoggedIn.value = await isAuthenticated()
-  if (isLoggedIn.value) {
-    await getUser() // Fetch user data only if logged in
+  const loggedIn = await authUser.isAuthenticated()
+  if (loggedIn) {
+    await authUser.getUserInformation()
+    isAdmin.value = authUser.userData?.is_admin || false
   } else {
-    isAdmin.value = false // Reset admin status on logout
+    isAdmin.value = false
+    authUser.$reset()
   }
 }
 
-//Load Functions during component rendering
-onMounted(() => {
-  getLoggedStatus()
-})
-
-//Toggle login to register modal
+// Toggle login to register modal
 const toggleFormMode = () => {
   isRegisterMode.value = !isRegisterMode.value
 }
+
+// Load Functions during component rendering
+onMounted(() => {
+  getLoggedStatus()
+})
 
 // Food Categories
 const foodCategories = [
@@ -69,23 +62,8 @@ const foodCategories = [
   'Drinks',
   'Desserts',
 ]
-
-// const foodItems = [
-//   {
-//     name: 'Pork Adebayor',
-//     description: 'Savory pork simmered in soy sauce and vinegar.',
-//     price: 40,
-//     image: '/images/pork-adobo.jpg',
-//   },
-//   {
-//     name: 'Holo Lulo',
-//     description: 'A refreshing dessert with crushed ice and sweet toppings.',
-//     price: 45,
-//     image: '/images/halo-halo2.jpg',
-//   },
-//   // Add more items as needed
-// ]
 </script>
+
 <template>
   <AppLayout
     :is-with-app-bar-nav-icon="true"
