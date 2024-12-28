@@ -278,6 +278,10 @@ const toggleFormMode = () => {
   font-family: 'Quicksand', sans-serif;
 }
 
+.v-container {
+  padding-bottom: 18px;
+}
+
 /* Navigation Header Styles */
 .text-logo {
   font-size: 35px;
