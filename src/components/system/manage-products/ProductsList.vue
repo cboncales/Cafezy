@@ -24,7 +24,6 @@ const formAction = ref({
 // Add Product Functionality
 const onAdd = () => {
   productData.value = null
-  console.log('productData after null:', productData.value) // Should log null
   isDialogVisible.value = true
 }
 

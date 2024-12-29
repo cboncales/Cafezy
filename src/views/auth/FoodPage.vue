@@ -3,13 +3,15 @@ import SideNavigation from '@/components/layout/SideNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
 import { useAuthUserStore } from '@/stores/authUser'
+import { useProductsStore } from '@/stores/product'
 import { useDisplay } from 'vuetify'
 import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
 
-// Use the authUser store
+// Use the authUser and product stores
 const authUser = useAuthUserStore()
+const productStore = useProductsStore()
 
 // State for drawer visibility
 const isDrawerVisible = ref(false)
@@ -19,13 +21,15 @@ const isLoginModalVisible = ref(false)
 const isRegisterMode = ref(false)
 const isAdmin = ref(false)
 
+// Products state
+const products = ref([])
+
 // Handle "Order Now" button click
-const handleOrderNow = (item) => {
+const handleOrderNow = item => {
   if (!authUser.userData) {
     isLoginModalVisible.value = true
     isRegisterMode.value = false
   } else {
-    // Implement the logic for processing the item order
     console.log('Order placed for:', item)
   }
 }
@@ -42,6 +46,12 @@ const getLoggedStatus = async () => {
   }
 }
 
+// Fetch products on mount
+const fetchProducts = async () => {
+  await productStore.getProducts()
+  products.value = productStore.products
+}
+
 // Toggle login to register modal
 const toggleFormMode = () => {
   isRegisterMode.value = !isRegisterMode.value
@@ -50,6 +60,7 @@ const toggleFormMode = () => {
 // Load Functions during component rendering
 onMounted(() => {
   getLoggedStatus()
+  fetchProducts()
 })
 
 // Food Categories
@@ -69,7 +80,6 @@ const foodCategories = [
     :is-with-app-bar-nav-icon="true"
     @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
   >
-    <!-- Side Navigation -->
     <template #navigation>
       <SideNavigation
         v-if="isAdmin"
@@ -80,7 +90,6 @@ const foodCategories = [
     <template #content>
       <v-container>
         <v-row>
-          <!-- Ordering Section -->
           <v-container>
             <div class="head-container my-16">
               <h1 class="head-text text-center my-5">Food Menu</h1>
@@ -102,13 +111,17 @@ const foodCategories = [
             </div>
 
             <v-row justify="center" align="center">
-              <!-- Card 1 -->
-              <v-col cols="12" md="4">
+              <v-col
+                v-for="product in products"
+                :key="product.id"
+                cols="12"
+                md="4"
+              >
                 <v-card class="ordering-card rounded-xl" outlined>
                   <v-img
                     class="card-img rounded-xl hover-image"
-                    src="/images/pork-adobo.jpg"
-                    alt="chicken adebayor"
+                    :src="product.image_url"
+                    :alt="product.name"
                     height="300"
                     cover
                   >
@@ -119,7 +132,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
-                          @click="handleOrderNow"
+                          @click="handleOrderNow(product)"
                         >
                           Order Now
                         </v-btn>
@@ -127,194 +140,13 @@ const foodCategories = [
                     </div>
                   </v-img>
                   <v-card-title>
-                    <h2 class="text-center">Pork Adebayor</h2>
-                    <h3 class="text-center">₱40/per serving</h3>
+                    <h2 class="text-center">{{ product.name }}</h2>
+                    <h3 class="text-center">
+                      ₱{{ product.price }}/per serving
+                    </h3>
                   </v-card-title>
                   <v-card-text class="text-center">
-                    A savory and slightly tangy dish made with pork simmered in
-                    a mixture of soy sauce, vinegar, garlic, bay leaves, and
-                    black peppercorns. It's often served with rice and is one of
-                    the most popular Filipino comfort foods.
-                  </v-card-text>
-                </v-card>
-              </v-col>
-              <!-- Card 2 -->
-              <v-col cols="12" md="4">
-                <v-card class="ordering-card rounded-xl" outlined>
-                  <v-img
-                    class="card-img rounded-xl hover-image"
-                    src="/images/halo-halo2.jpg"
-                    alt="chicken adebayor"
-                    height="300"
-                    cover
-                  >
-                    <div class="overlay">
-                      <v-card-actions class="hover-actions">
-                        <v-btn
-                          class="order-btn rounded-pill"
-                          color="white"
-                          block
-                          prepend-icon="mdi mdi-cart"
-                          @click="handleOrderNow"
-                        >
-                          Order Now
-                        </v-btn>
-                      </v-card-actions>
-                    </div>
-                  </v-img>
-                  <v-card-title>
-                    <h2 class="text-center">Holo Lulo</h2>
-                    <h3 class="text-center">₱45/per serving</h3>
-                  </v-card-title>
-                  <v-card-text class="text-center">
-                    A popular Filipino dessert made with crushed ice, sweetened
-                    fruits, beans, jellies, and sometimes ice cream, all topped
-                    with leche flan and purple yam (ube). It’s a refreshing
-                    treat, especially during hot weather.
-                  </v-card-text>
-                </v-card>
-              </v-col>
-              <!-- Card 3 -->
-              <v-col cols="12" md="4">
-                <v-card class="ordering-card rounded-xl" outlined>
-                  <v-img
-                    class="card-img rounded-xl hover-image"
-                    src="/images/chicken-curry.jpg"
-                    alt="stephen curry"
-                    height="300"
-                    cover
-                  >
-                    <div class="overlay">
-                      <v-card-actions class="hover-actions">
-                        <v-btn
-                          class="order-btn rounded-pill"
-                          color="white"
-                          block
-                          prepend-icon="mdi mdi-cart"
-                          @click="handleOrderNow"
-                        >
-                          Order Now
-                        </v-btn>
-                      </v-card-actions>
-                    </div>
-                  </v-img>
-                  <v-card-title>
-                    <h2 class="text-center">Stephen Curry</h2>
-                    <h3 class="text-center">₱35/per serving</h3>
-                  </v-card-title>
-                  <v-card-text class="text-center">
-                    A Filipino-style chicken curry made with chicken pieces
-                    cooked in a coconut milk-based sauce, spiced with curry
-                    powder, and mixed with vegetables like potatoes, carrots,
-                    and bell peppers. It's a comforting and flavorful dish.
-                  </v-card-text>
-                </v-card>
-              </v-col>
-              <!-- Card 4 -->
-              <v-col cols="12" md="4">
-                <v-card class="ordering-card rounded-xl" outlined>
-                  <v-img
-                    class="card-img rounded-xl hover-image"
-                    src="/images/paksiw.jpg"
-                    alt="pakistan"
-                    height="300"
-                    cover
-                  >
-                    <div class="overlay">
-                      <v-card-actions class="hover-actions">
-                        <v-btn
-                          class="order-btn rounded-pill"
-                          color="white"
-                          block
-                          prepend-icon="mdi mdi-cart"
-                          @click="handleOrderNow"
-                        >
-                          Order Now
-                        </v-btn>
-                      </v-card-actions>
-                    </div>
-                  </v-img>
-                  <v-card-title>
-                    <h2 class="text-center">Pakistan</h2>
-                    <h3 class="text-center">₱40/per serving</h3>
-                  </v-card-title>
-                  <v-card-text class="text-center">
-                    A Filipino dish typically made with pork or fish, cooked in
-                    vinegar, soy sauce, garlic, and spices. It's known for its
-                    tangy and savory flavor, with a distinct vinegar base that
-                    is cooked until tender.
-                  </v-card-text>
-                </v-card>
-              </v-col>
-              <!-- Card 5 -->
-              <v-col cols="12" md="4">
-                <v-card class="ordering-card rounded-xl" outlined>
-                  <v-img
-                    class="card-img rounded-xl hover-image"
-                    src="/images/mechado.jpg"
-                    alt="Makarena"
-                    height="300"
-                    cover
-                  >
-                    <div class="overlay">
-                      <v-card-actions class="hover-actions">
-                        <v-btn
-                          class="order-btn rounded-pill"
-                          color="white"
-                          block
-                          prepend-icon="mdi mdi-cart"
-                          @click="handleOrderNow"
-                        >
-                          Order Now
-                        </v-btn>
-                      </v-card-actions>
-                    </div>
-                  </v-img>
-                  <v-card-title>
-                    <h2 class="text-center">Makarena</h2>
-                    <h3 class="text-center">₱40/per serving</h3>
-                  </v-card-title>
-                  <v-card-text class="text-center">
-                    A Filipino beef stew made with beef chunks, marinated in soy
-                    sauce, garlic, and lemon, then slow-cooked with tomatoes,
-                    onions, and potatoes. It has a savory and slightly sweet
-                    sauce, often enjoyed with rice.
-                  </v-card-text>
-                </v-card>
-              </v-col>
-              <!-- Card 6 -->
-              <v-col cols="12" md="4">
-                <v-card class="ordering-card rounded-xl" outlined>
-                  <v-img
-                    class="card-img rounded-xl hover-image"
-                    src="/images/beef-steak.jpg"
-                    alt="Biskwit"
-                    height="300"
-                    cover
-                  >
-                    <div class="overlay">
-                      <v-card-actions class="hover-actions">
-                        <v-btn
-                          class="order-btn rounded-pill"
-                          color="white"
-                          block
-                          prepend-icon="mdi mdi-cart"
-                          @click="handleOrderNow"
-                        >
-                          Order Now
-                        </v-btn>
-                      </v-card-actions>
-                    </div>
-                  </v-img>
-                  <v-card-title>
-                    <h2 class="text-center">Biskwit</h2>
-                    <h3 class="text-center">₱40/per serving</h3>
-                  </v-card-title>
-                  <v-card-text class="text-center">
-                    A Filipino beef dish made with thin slices of beef marinated
-                    in soy sauce, calamansi (or lemon), garlic, and onions. It
-                    is typically cooked with onions and served with a savory,
-                    tangy sauce.
+                    {{ product.description }}
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -323,7 +155,6 @@ const foodCategories = [
         </v-row>
       </v-container>
 
-      <!-- Auth Modal -->
       <AuthModal
         v-model:isVisible="isLoginModalVisible"
         :is-register-mode="isRegisterMode"
@@ -332,6 +163,7 @@ const foodCategories = [
     </template>
   </AppLayout>
 </template>
+
 <style scoped>
 .head-text {
   font-size: 50px;
