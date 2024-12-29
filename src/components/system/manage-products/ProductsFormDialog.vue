@@ -4,7 +4,7 @@ import AlertNotification from '@/components/common/AlertNotification.vue'
 import { requiredValidator, imageValidator } from '@/utils/validators'
 import { formActionDefault } from '@/utils/supabase.js'
 import { useDisplay } from 'vuetify'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useProductsStore } from '@/stores/product'
 import { fileExtract } from '@/utils/helpers'
 
@@ -37,6 +37,18 @@ const refVForm = ref()
 const isUpdate = ref(false)
 const imgPreview = ref('/images/img-product.png')
 
+// Monitor itemData if it has data
+watch(
+  () => props.productData,
+  () => {
+    isUpdate.value = props.productData ? true : false
+    formData.value = props.productData
+      ? { ...props.productData }
+      : { ...formDataDefault }
+    imgPreview.value = props.productData.image_url ?? '/images/img-product.png'
+  },
+)
+
 // Function to handle file change and show image preview
 const onPreview = async event => {
   const { fileObject, fileUrl } = await fileExtract(event)
@@ -56,7 +68,9 @@ const onSubmit = async () => {
   formAction.value = { ...formActionDefault, formProcess: true }
 
   // Check if isUpdate is true, then do update, if false do add
-  const { data, error } = await productStore.addProduct(formData.value)
+  const { data, error } = isUpdate.value
+    ? await productStore.updateProduct(formData.value)
+    : await productStore.addProduct(formData.value)
 
   if (error) {
     // Add Error Message and Status Code

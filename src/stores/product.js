@@ -67,19 +67,25 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   async function addProduct(formData) {
+    // Check if there is an image
     if (formData.image) {
+      // Upload image in supabase and get the image_url
       formData.image_url = await updateProductImage(
         formData.image,
         formData.name,
       )
       delete formData.image
     }
+
+    // Insert the product with the formData
     return await supabase.from('products').insert([formData]).select()
   }
 
   // Update Products
   async function updateProduct(formData) {
+    // Check if there is an image
     if (formData.image) {
+      // Update image in supabase and get the image_url
       formData.image_url = await updateProductImage(
         formData.image,
         formData.name,
@@ -87,6 +93,7 @@ export const useProductsStore = defineStore('products', () => {
       delete formData.image
     }
 
+    // Update the product with the formData
     return await supabase
       .from('products')
       .update(formData)
@@ -121,5 +128,6 @@ export const useProductsStore = defineStore('products', () => {
     getProductsFromApi,
     getProducts,
     addProduct,
+    updateProduct,
   }
 })
