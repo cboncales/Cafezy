@@ -16,6 +16,13 @@ const isDialogVisible = ref(false)
 
 // Add Product Functionality
 const onAdd = () => {
+  productData.value = null
+  isDialogVisible.value = true
+}
+
+// Update Product Functionality
+const onUpdate = product => {
+  productData.value = product
   isDialogVisible.value = true
 }
 
@@ -85,7 +92,7 @@ onMounted(async () => {
                 <p><strong>Description:</strong> {{ product.description }}</p>
             </v-card-text>
             <v-card-actions>
-                <v-btn variant="elevated" density="comfortable" icon>
+                <v-btn variant="elevated" density="comfortable" @click="onUpdate(product)" icon>
                     <v-icon icon="mdi-pencil"></v-icon>
                 </v-btn>
                 <v-btn variant="elevated" density="comfortable" icon>
