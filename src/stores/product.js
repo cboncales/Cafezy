@@ -101,6 +101,11 @@ export const useProductsStore = defineStore('products', () => {
       .select()
   }
 
+  // Delete Product
+  async function deleteProduct(id) {
+    return await supabase.from('products').delete().eq('id', id)
+  }
+
   // Update Product Image
   async function updateProductImage(file, filename) {
     // Upload the file with the file name and file extension
@@ -129,5 +134,6 @@ export const useProductsStore = defineStore('products', () => {
     getProducts,
     addProduct,
     updateProduct,
+    deleteProduct,
   }
 })
