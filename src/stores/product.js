@@ -55,26 +55,18 @@ export const useProductsStore = defineStore('products', () => {
 
   // Retrieve products from Supabase
   async function getProducts(search) {
-    search = tableSearch(search)
-
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('products')
       .select('*')
       .order('name', { ascending: true })
-      .ilike('name', '%' + search + '%')
+      .ilike('name', `%${search || ''}%`)
 
-    if (error) {
-      console.error('Error retrieving products:', error)
-    } else {
-      products.value = data
-    }
+    // Set the retrieved data to state
+    products.value = data || []
   }
 
   async function addProduct(formData) {
-    // eslint-disable-next-line no-unused-vars
-    const { image, ...data } = formData
-
-    return await supabase.from('products').insert([data]).select()
+    return await supabase.from('products').insert([formData]).select()
   }
 
   return {
