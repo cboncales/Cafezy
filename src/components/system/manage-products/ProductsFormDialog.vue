@@ -6,6 +6,7 @@ import { formActionDefault } from '@/utils/supabase.js'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 import { useProductsStore } from '@/stores/product'
+import { fileExtract } from '@/utils/helpers'
 
 const props = defineProps(['isDialogVisible', 'productData', 'tableFilters'])
 
@@ -23,6 +24,7 @@ const formDataDefault = {
   name: '',
   price: 0,
   description: '',
+  image: null,
   user_id: authStore.userData.id,
 }
 const formData = ref({
@@ -34,6 +36,20 @@ const formAction = ref({
 const refVForm = ref()
 const isUpdate = ref(false)
 const imgPreview = ref('/images/img-product.png')
+
+// Function to handle file change and show image preview
+const onPreview = async event => {
+  const { fileObject, fileUrl } = await fileExtract(event)
+  // Update formData
+  formData.value.image = fileObject
+  // Update imgPreview state
+  imgPreview.value = fileUrl
+}
+
+// Function to reset preview if file-input clear is clicked
+const onPreviewReset = () => {
+  imgPreview.value = formData.value.image_url ?? '/images/img-product.png'
+}
 
 const onSubmit = async () => {
   // Reset Form Action utils
@@ -145,6 +161,8 @@ const onFormReset = () => {
                 prepend-icon="mdi-camera"
                 show-size
                 chips
+                @change="onPreview"
+                @click:clear="onPreviewReset"
               ></v-file-input>
             </v-col>
           </v-row>
