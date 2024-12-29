@@ -3,6 +3,7 @@ import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useAuthUserStore } from './authUser'
+import { getSlugText } from '@/utils/helpers'
 
 export const useProductsStore = defineStore('products', () => {
   const authStore = useAuthUserStore()
@@ -66,7 +67,51 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   async function addProduct(formData) {
+    if (formData.image) {
+      formData.image_url = await updateProductImage(
+        formData.image,
+        formData.name,
+      )
+      delete formData.image
+    }
     return await supabase.from('products').insert([formData]).select()
+  }
+
+  // Update Products
+  async function updateProduct(formData) {
+    if (formData.image) {
+      formData.image_url = await updateProductImage(
+        formData.image,
+        formData.name,
+      )
+      delete formData.image
+    }
+
+    return await supabase
+      .from('products')
+      .update(formData)
+      .eq('id', formData.id)
+      .select()
+  }
+
+  // Update Product Image
+  async function updateProductImage(file, filename) {
+    // Upload the file with the file name and file extension
+    const { data } = await supabase.storage
+      .from('cafezy')
+      .upload('products/' + getSlugText(filename) + '.png', file, {
+        cacheControl: '3600',
+        upsert: true,
+      })
+
+    // If no error set data to userData state with the image_url
+    if (data) {
+      // Retrieve Image Public Url
+      const { data: imageData } = supabase.storage
+        .from('cafezy')
+        .getPublicUrl(data.path)
+      return imageData.publicUrl
+    }
   }
 
   return {
