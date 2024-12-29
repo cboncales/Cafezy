@@ -23,7 +23,6 @@ const formDataDefault = {
   name: '',
   price: 0,
   description: '',
-  image: null,
   user_id: authStore.userData.id,
 }
 const formData = ref({

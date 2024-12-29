@@ -1,0 +1,109 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import ProductsFormDialog from '@/components/system/manage-products/ProductsFormDialog.vue'
+import { useProductsStore } from '@/stores/product'
+import { getMoneyText } from '@/utils/helpers'
+
+// Use Pinia Store
+const productsStore = useProductsStore()
+
+// Load Variables
+const tableFilters = ref({
+  search: '',
+})
+const productData = ref(null)
+const isDialogVisible = ref(false)
+
+// Add Product Functionality
+const onAdd = () => {
+  isDialogVisible.value = true
+}
+
+const onSearchProducts = async () => {
+  const searchValue = tableFilters.value.search || ''
+  if (searchValue.length >= 3 || searchValue === '') {
+    await productsStore.getProducts(searchValue)
+  }
+}
+
+// Trigger retrieve from API and reset db
+const onRetrieveFromApi = async () => {
+  await productsStore.getProductsFromApi()
+}
+
+// Load Functions during component rendering
+onMounted(async () => {
+  if (productsStore.products.length === 0) await productsStore.getProducts('')
+})
+</script>
+
+<template>
+  <v-row>
+    <v-col cols="12" sm="8">
+      <v-text-field
+        v-model="tableFilters.search"
+        variant="outlined"
+        label="Search Product"
+        density="compact"
+        append-inner-icon="mdi-magnify"
+        clearable
+        @click:clear="onSearchProducts"
+        @input="onSearchProducts"
+      ></v-text-field>
+    </v-col>
+    <v-col cols="12" sm="3">
+      <v-btn
+        prepend-icon="mdi-plus"
+        color="orange-darken-2"
+        @click="onAdd"
+        block
+        >Add Product</v-btn
+      >
+    </v-col>
+    <v-col cols="12" sm="1">
+      <v-btn
+        variant="elevated"
+        density="comfortable"
+        @click="onRetrieveFromApi"
+        icon
+      >
+        <v-icon icon="mdi-refresh"></v-icon>
+      </v-btn>
+    </v-col>
+
+    <v-divider></v-divider>
+
+    <!-- Product Table -->
+
+    <!-- prettier-ignore -->
+    <v-col cols="12" sm="4" v-for="product in productsStore.products" :key="product.id"> 
+        <v-card :title="product.name" min-height="200">
+            <v-card-text>
+              <!-- Display price and description -->
+              <p><strong>Price:</strong> {{ getMoneyText(product.price) }}</p>
+              <p><strong>Description:</strong> {{ product.description }}</p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn variant="elevated" density="comfortable" icon>
+                <v-icon icon="mdi-pencil"></v-icon>
+              </v-btn>
+              <v-btn variant="elevated" density="comfortable" icon>
+                <v-icon color="error" icon="mdi-delete"></v-icon>
+              </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-col>
+  </v-row>
+
+  <!-- Product Form Dialog -->
+  <ProductsFormDialog
+    v-model:is-dialog-visible="isDialogVisible"
+    :product-data="productData"
+    :table-filter="tableFilters"
+  ></ProductsFormDialog>
+</template>
+<style scoped>
+* {
+  font-family: 'Quicksand', sans-serif;
+}
+</style>

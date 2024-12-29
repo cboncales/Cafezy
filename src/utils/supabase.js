@@ -50,6 +50,7 @@ export const tablePagination = (
 }
 
 // 👉 Handle Search if null turn to empty string
-export const tableSearch = search => {
+// prettier-ignore
+export const tableSearch = (search) => {
   return (search ||= '')
 }
