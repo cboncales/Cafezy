@@ -12,7 +12,7 @@ const props = defineProps(['isDialogVisible', 'productData', 'tableFilters'])
 
 const emit = defineEmits(['update:isDialogVisible'])
 
-// Utilize pre-defined vue functions
+// Utilize pre-defined Vue functions
 const { mdAndDown } = useDisplay()
 
 // Use Pinia Store
@@ -27,12 +27,8 @@ const formDataDefault = {
   image: null,
   user_id: authStore.userData.id,
 }
-const formData = ref({
-  ...formDataDefault,
-})
-const formAction = ref({
-  ...formActionDefault,
-})
+const formData = ref({ ...formDataDefault })
+const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
 const isUpdate = ref(false)
 const imgPreview = ref('/images/img-product.png')
@@ -40,58 +36,50 @@ const imgPreview = ref('/images/img-product.png')
 // Monitor itemData if it has data
 watch(
   () => props.productData,
-  () => {
-    isUpdate.value = props.productData ? true : false
-    formData.value = props.productData
-      ? { ...props.productData }
-      : { ...formDataDefault }
-    imgPreview.value = props.productData.image_url ?? '/images/img-product.png'
+  newValue => {
+    isUpdate.value = !!newValue
+    formData.value = newValue ? { ...newValue } : { ...formDataDefault }
+    imgPreview.value = newValue?.image_url || '/images/img-product.png'
   },
+  { immediate: true },
 )
 
 // Function to handle file change and show image preview
 const onPreview = async event => {
   const { fileObject, fileUrl } = await fileExtract(event)
-  // Update formData
   formData.value.image = fileObject
-  // Update imgPreview state
   imgPreview.value = fileUrl
 }
 
 // Function to reset preview if file-input clear is clicked
 const onPreviewReset = () => {
-  imgPreview.value = formData.value.image_url ?? '/images/img-product.png'
+  imgPreview.value = formData.value.image_url || '/images/img-product.png'
 }
 
+// Function to handle form submission
 const onSubmit = async () => {
-  // Reset Form Action utils
   formAction.value = { ...formActionDefault, formProcess: true }
 
-  // Check if isUpdate is true, then do update, if false do add
   const { data, error } = isUpdate.value
     ? await productStore.updateProduct(formData.value)
     : await productStore.addProduct(formData.value)
 
   if (error) {
-    // Add Error Message and Status Code
     formAction.value.formErrorMessage = error.message
     formAction.value.formStatus = error.status
-
-    // Turn off processing
     formAction.value.formProcess = false
-  } else if (data) {
-    // Add Success Message
-    formAction.value.formSuccessMessage = isUpdate.value
-      ? 'Successfully Updated Item Information.'
-      : 'Successfully Added Item.'
-
-    await productStore.getProducts(props.tableFilters)
-
-    // Form Reset and Close Dialog
-    setTimeout(() => {
-      onFormReset()
-    }, 2500)
+    return
   }
+
+  formAction.value.formSuccessMessage = isUpdate.value
+    ? 'Successfully Updated Item Information.'
+    : 'Successfully Added Item.'
+
+  await productStore.getProducts(props.tableFilters)
+
+  setTimeout(() => {
+    onFormReset()
+  }, 2500)
 }
 
 // Trigger Validators
@@ -101,8 +89,10 @@ const onFormSubmit = () => {
   })
 }
 
-// Form Reset
+// Reset Form and Close Dialog
 const onFormReset = () => {
+  formData.value = { ...formDataDefault }
+  imgPreview.value = '/images/img-product.png'
   formAction.value = { ...formActionDefault }
   emit('update:isDialogVisible', false)
 }
@@ -131,7 +121,6 @@ const onFormReset = () => {
                 :rules="[requiredValidator]"
               ></v-text-field>
             </v-col>
-
             <v-col cols="12">
               <v-text-field
                 v-model="formData.price"
@@ -142,7 +131,6 @@ const onFormReset = () => {
                 :rules="[requiredValidator]"
               ></v-text-field>
             </v-col>
-
             <v-col cols="12">
               <v-textarea
                 v-model="formData.description"
@@ -151,7 +139,6 @@ const onFormReset = () => {
                 :rules="[requiredValidator]"
               ></v-textarea>
             </v-col>
-
             <v-col cols="12" sm="6" md="4">
               <v-img
                 width="55%"
@@ -161,10 +148,8 @@ const onFormReset = () => {
                 :src="imgPreview"
                 alt="Item Picture Preview"
                 cover
-              >
-              </v-img>
+              ></v-img>
             </v-col>
-
             <v-col cols="12" sm="6" md="8">
               <v-file-input
                 class="mt-5"
@@ -181,19 +166,15 @@ const onFormReset = () => {
             </v-col>
           </v-row>
         </v-card-text>
-
         <v-divider></v-divider>
-
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-
           <v-btn
             text="Close"
             variant="plain"
             prepend-icon="mdi-close"
             @click="onFormReset"
           ></v-btn>
-
           <v-btn
             prepend-icon="mdi-pencil"
             color="orange-darken-2"

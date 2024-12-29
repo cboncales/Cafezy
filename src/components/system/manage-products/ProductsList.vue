@@ -24,6 +24,7 @@ const formAction = ref({
 // Add Product Functionality
 const onAdd = () => {
   productData.value = null
+  console.log('productData after null:', productData.value) // Should log null
   isDialogVisible.value = true
 }
 
@@ -66,9 +67,12 @@ const onSearchProducts = async () => {
   }
 }
 
-// Trigger retrieve from API and reset db
-const onRetrieveFromApi = async () => {
-  await productsStore.getProductsFromApi()
+// Refresh Functionality
+const refreshProducts = async () => {
+  // Clear search filter
+  tableFilters.value.search = ''
+  // Fetch the product list again
+  await productsStore.getProducts('')
 }
 
 // Load Functions during component rendering
@@ -104,7 +108,7 @@ onMounted(async () => {
       <v-btn
         variant="elevated"
         density="comfortable"
-        @click="onRetrieveFromApi"
+        @click="refreshProducts"
         icon
       >
         <v-icon icon="mdi-refresh"></v-icon>
