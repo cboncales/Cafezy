@@ -5,12 +5,14 @@ import { useProductsStore } from '@/stores/product.js'
 const productsStore = useProductsStore()
 
 onMounted(async () => {
-  if (productsStore.products.length == 0)
+  if (productsStore.products.length === 0) {
     await productsStore.getProductsFromApi()
+  }
 
   console.log(productsStore.products)
 })
 </script>
+
 <template>
   <v-row>
     <v-col
@@ -21,11 +23,9 @@ onMounted(async () => {
     >
       <v-card :title="product.name" min-height="200">
         <v-card-text>
-          <ul class="ms-5">
-            <li v-for="(value, key) in product.data" :key="key">
-              <span class="font-weight-bold"> {{ key }}:</span> {{ value }}
-            </li>
-          </ul>
+          <!-- Display price and description -->
+          <p><strong>Price:</strong> {{ product.price }}</p>
+          <p><strong>Description:</strong> {{ product.description }}</p>
         </v-card-text>
         <v-card-actions>
           <v-btn variant="elevated" density="comfortable" icon>
@@ -39,4 +39,5 @@ onMounted(async () => {
     </v-col>
   </v-row>
 </template>
+
 <style scoped></style>
