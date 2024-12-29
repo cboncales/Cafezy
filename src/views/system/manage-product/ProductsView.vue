@@ -1,4 +1,5 @@
 <script setup>
+import ProductsFormDialog from '@/components/system/manage-products/ProductsFormDialog.vue'
 import { ref, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
 import AppLayout from '@/components/layout/AppLayout.vue'
@@ -22,52 +23,30 @@ function onClick() {
   }, 2000)
 }
 
-const products = ref([
-  {
-    id: 1,
-    name: 'Bulalo',
-    price: 50,
-    description: 'Beef Soup',
-    category: 'Soup',
-  },
-  {
-    id: 2,
-    name: 'Halo Halo',
-    price: 45,
-    description:
-      'made with crushed ice, sweetened fruits, beans, jellies, and sometimes ice cream, all topped with leche flan and purple yam (ube)',
-    category: 'Dessert',
-  },
-  {
-    id: 3,
-    name: 'Burger',
-    price: 30,
-    description: 'beef burger',
-    category: 'Burger',
-  },
-])
-
+// Use Pinia Store
 const productStore = useProductsStore()
-const selectedProduct = ref({})
-const isFormVisible = ref(false)
 
-const openForm = (product = null) => {
-  selectedProduct.value = product
-    ? { ...product }
-    : { name: '', price: 0, description: '', category: '' }
-  isFormVisible.value = true
+// Load Variables
+const tableFilters = ref({
+  search: '',
+})
+const productData = ref(null)
+const isDialogVisible = ref(false)
+
+// Add Product Functionality
+const onAdd = () => {
+  isDialogVisible.value = true
 }
 
+// Trigger retrieve from API and reset db
 const onRetrieveFromApi = async () => {
   await productStore.getProductsFromApi()
 }
 
-const closeForm = () => {
-  isFormVisible.value = false
-}
-
+// Load Functions during component rendering
 onMounted(async () => {
-  if (productStore.products.length === 0) await productStore.getProducts()
+  if (productStore.products.length === 0)
+    await productStore.getProducts(tableFilters)
 })
 </script>
 
@@ -102,6 +81,7 @@ onMounted(async () => {
             <v-card max-width="400">
               <v-card-text>
                 <v-text-field
+                  v-model="tableFilters.search"
                   :loading="loading"
                   append-inner-icon="mdi-magnify"
                   density="compact"
@@ -119,12 +99,18 @@ onMounted(async () => {
               color="orange-darken-2"
               prepend-icon="mdi-plus"
               block
-              @click="openForm"
+              @click="onAdd"
               >Add Product</v-btn
             >
           </v-col>
           <v-col cols="12" sm="1">
-            <v-btn class="my-5" variant="elevated" density="comfortable" @click="onRetrieveFromApi" icon>
+            <v-btn
+              class="my-5"
+              variant="elevated"
+              density="comfortable"
+              @click="onRetrieveFromApi"
+              icon
+            >
               <v-icon icon="mdi-refresh"></v-icon>
             </v-btn>
           </v-col>
@@ -139,37 +125,11 @@ onMounted(async () => {
         </v-card>
 
         <!-- Product Form Dialog -->
-        <v-dialog v-model="isFormVisible" max-width="500">
-          <v-card>
-            <v-card-title>
-              {{ selectedProduct ? 'Edit Product' : 'Create Product' }}
-            </v-card-title>
-            <v-card-text>
-              <v-form>
-                <v-text-field
-                  label="Product Name"
-                  v-model="selectedProduct.name"
-                ></v-text-field>
-                <v-text-field
-                  label="Price"
-                  v-model="selectedProduct.price"
-                ></v-text-field>
-                <v-text-field
-                  label="Description"
-                  v-model="selectedProduct.description"
-                ></v-text-field>
-                <v-text-field
-                  label="Category"
-                  v-model="selectedProduct.category"
-                ></v-text-field>
-              </v-form>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn color="primary" @click="closeForm">Save</v-btn>
-              <v-btn text @click="closeForm">Cancel</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <ProductsFormDialog
+          v-model:is-dialog-visible="isDialogVisible"
+          :product-data="productData"
+          :table-filter="tableFilters"
+        ></ProductsFormDialog>
       </v-container>
     </template>
   </AppLayout>

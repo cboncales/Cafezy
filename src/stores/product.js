@@ -1,4 +1,4 @@
-import { supabase } from '@/utils/supabase'
+import { supabase, tableSearch } from '@/utils/supabase'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -21,50 +21,68 @@ export const useProductsStore = defineStore('products', () => {
   async function getProductsFromApi() {
     // Ensure user is authenticated
     if (!authStore.userData || !authStore.userData.id) {
-      console.error("User is not authenticated or user data is missing.");
-      return;
+      console.error('User is not authenticated or user data is missing.')
+      return
     }
-    
+
     // Fetch products from API
     const response = await axios.get('https://api.restful-api.dev/objects')
 
+    // Set response data to state
     productsFromApi.value = response.data
 
-    
-    await supabase .from('products') .delete() .neq('id', 0)
-        
+    // Delete all rows from products Supabase
+    await supabase.from('products').delete().neq('id', 0)
 
+    // Re-map/Restructure array of objects to fit the products table's column
     const transformedProducts = response.data.map(product => {
       return {
         name: product.name,
-        description: product.data?.Description ?? '', 
+        description: product.data?.Description ?? '',
         price: product.data?.Price ?? 0,
         user_id: authStore.userData.id,
       }
     })
 
-    // Insert products into Supabase
-    const { data, error } = await supabase.from('products').insert(transformedProducts).select()
+    // Insert multiple rows from the re-mapped array of objects
+    const { data } = await supabase
+      .from('products')
+      .insert(transformedProducts)
+      .select()
 
-    if (error) {
-      console.error("Error inserting products:", error);
-    } else {
-      console.log("Inserted products:", data)
-    }
-
-    if (data) await getProducts()
+    if (data) await getProducts({ search: '' })
   }
 
   // Retrieve products from Supabase
-  async function getProducts() {
-    const { data, error } = await supabase.from('products').select('*')
+  async function getProducts(search) {
+    search = tableSearch(search)
+
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('name', { ascending: true })
+      .ilike('name', '%' + search + '%')
 
     if (error) {
-      console.error("Error retrieving products:", error);
+      console.error('Error retrieving products:', error)
     } else {
       products.value = data
     }
   }
 
-  return { productsFromApi, products, $reset, getProductsFromApi, getProducts }
+  async function addProduct(formData) {
+    // eslint-disable-next-line no-unused-vars
+    const { image, ...data } = formData
+
+    return await supabase.from('products').insert([data]).select()
+  }
+
+  return {
+    productsFromApi,
+    products,
+    $reset,
+    getProductsFromApi,
+    getProducts,
+    addProduct,
+  }
 })
