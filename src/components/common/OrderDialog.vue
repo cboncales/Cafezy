@@ -56,18 +56,31 @@ const submitOrder = async () => {
   isSubmitting.value = true
 
   try {
+    // Step 1: Get the active order for the user
     let orderId = props.order?.id
 
     if (!orderId) {
-      // Create a new order
-      const newOrder = await ordersStore.createOrder({
-        totalPrice: 0, // Initial price (will be updated)
-        status: false, // Active order
-      })
+      const activeOrder = await ordersStore.getActiveOrderForUser()
 
-      orderId = newOrder.id
+      if (activeOrder) {
+        // Use the existing active order if found
+        orderId = activeOrder.id
+      } else {
+        // No active order, create a new one
+        const newOrder = await ordersStore.createOrder({
+          totalPrice: totalPrice.value, // Initial price will be updated later
+          status: false, // Active order
+        })
+
+        if (!newOrder) {
+          throw new Error('Failed to create a new order')
+        }
+
+        orderId = newOrder.id
+      }
     }
 
+    // Step 2: Add the order item to the active order
     await orderItemsStore.addOrderItem({
       orderId,
       productId: props.product.id,
@@ -75,10 +88,21 @@ const submitOrder = async () => {
       subtotal: totalPrice.value,
     })
 
-    console.log('Order successfully added!')
+    // Step 3: Update the total price of the order after adding the item
+    const activeOrder = await ordersStore.getActiveOrderForUser()
+
+    if (activeOrder) {
+      const newTotalPrice = activeOrder.total_price + totalPrice.value
+
+      await ordersStore.updateOrder(activeOrder.id, {
+        total_price: newTotalPrice,
+      })
+    }
+
+    console.log('Order item successfully added and total price updated!')
     closeDialog()
   } catch (error) {
-    console.error('Error adding order:', error)
+    console.error('Error adding order item:', error)
   } finally {
     isSubmitting.value = false
   }

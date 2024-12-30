@@ -69,7 +69,7 @@ export const useOrdersStore = defineStore('orders', () => {
     return data
   }
 
-  // Update an order (e.g., mark as completed)
+  // Update an order (e.g., mark as completed or update total price)
   async function updateOrder(orderId, updates) {
     const { data, error } = await supabase
       .from('orders')
