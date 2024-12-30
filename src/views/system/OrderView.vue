@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useOrdersStore } from '@/stores/order'
 import { useOrderItemsStore } from '@/stores/orderItems'
 
@@ -14,6 +14,7 @@ const orderItemsStore = useOrderItemsStore()
 // States
 const activeOrder = ref(null)
 const orderItems = ref([])
+const pendingOrders = ref([]) // For pending orders
 
 // Fetch orders and order items on mount
 onMounted(async () => {
@@ -25,13 +26,51 @@ onMounted(async () => {
     orderItems.value = await orderItemsStore.getOrderItemsWithProductDetails(
       activeOrder.value.id,
     )
+  } else {
+    console.log('No active order found. User may need to create a new order.')
   }
+
+  // Fetch pending orders
+  pendingOrders.value = await orderStore.getPendingOrdersForUser()
 })
 
+// Watch the "Pending" tab and refresh data when it becomes active
+watch(
+  () => tab.value,
+  async newTab => {
+    if (newTab === 'two') {
+      pendingOrders.value = await orderStore.getPendingOrdersForUser()
+    }
+  },
+)
+
 // Handle "Order Now" button click
-const onOrderNow = () => {
-  console.log('Order Now button clicked')
-  // Add logic to finalize the order (e.g., mark it as completed)
+const onOrderNow = async () => {
+  if (!activeOrder.value) {
+    console.error('No active order to update.')
+    return
+  }
+
+  try {
+    // Update the order status to true (mark as pending)
+    const updatedOrder = await orderStore.updateOrder(activeOrder.value.id, {
+      status: true,
+    })
+
+    if (updatedOrder) {
+      console.log('Order status updated successfully.')
+
+      // Clear the active order since it's now in pending status
+      activeOrder.value = null
+      orderItems.value = []
+
+      // Move to the "Pending" tab and fetch pending orders
+      tab.value = 'two'
+      pendingOrders.value = await orderStore.getPendingOrdersForUser()
+    }
+  } catch (error) {
+    console.error('Error updating order:', error)
+  }
 }
 </script>
 
@@ -101,6 +140,32 @@ const onOrderNow = () => {
                       Order Now
                     </v-btn>
                   </v-card-actions>
+                </v-card>
+              </div>
+              <!-- Pending Orders -->
+              <div v-show="tab === 'two'">
+                <v-card
+                  v-for="order in pendingOrders"
+                  :key="order.id"
+                  class="mb-4"
+                >
+                  <v-card-title class="font-weight-bold text-h4">
+                    Order #{{ order.id }}
+                  </v-card-title>
+                  <v-card-subtitle class="font-weight-bold">
+                    Ordered on:
+                    {{ new Date(order.created_at).toLocaleDateString() }}
+                  </v-card-subtitle>
+                  <v-card-text>
+                    <span class="font-weight-bold text-lg text-h6">
+                      Total Price:
+                      <span
+                        class="text-lg font-weight-bold text-orange darken-2 text-h6"
+                      >
+                        ₱{{ order.total_price.toFixed(2) }}
+                      </span>
+                    </span>
+                  </v-card-text>
                 </v-card>
               </div>
             </div>

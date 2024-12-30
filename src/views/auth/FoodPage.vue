@@ -150,7 +150,7 @@ const foodCategories = [
                           prepend-icon="mdi mdi-cart"
                           @click="openOrderDialog(product)"
                         >
-                          Order Now
+                          Order
                         </v-btn>
                       </v-card-actions>
                     </div>
