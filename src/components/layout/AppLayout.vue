@@ -42,7 +42,6 @@ onMounted(() => {
 })
 </script>
 
-
 <template>
   <v-responsive>
     <v-app>
@@ -84,7 +83,6 @@ onMounted(() => {
             <v-col cols="auto" class="d-flex align-center" v-if="!mobile">
               <v-btn class="nav-btn ml-2" to="/login">Home</v-btn>
               <v-btn class="nav-btn mx-2" to="/food">Food</v-btn>
-              <v-btn class="nav-btn mx-2" to="/contact">Contact Us</v-btn>
               <v-btn
                 v-if="isLoggedIn && !isAdmin"
                 class="nav-btn mx-2"
@@ -92,6 +90,7 @@ onMounted(() => {
               >
                 Orders
               </v-btn>
+              <v-btn class="nav-btn mx-2" to="/contact">Contact Us</v-btn>
             </v-col>
 
             <!-- Profile and Social Links -->
