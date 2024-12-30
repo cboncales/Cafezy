@@ -27,6 +27,12 @@ onMounted(async () => {
     )
   }
 })
+
+// Handle "Order Now" button click
+const onOrderNow = () => {
+  console.log('Order Now button clicked')
+  // Add logic to finalize the order (e.g., mark it as completed)
+}
 </script>
 
 <template>
@@ -54,29 +60,45 @@ onMounted(async () => {
               <!-- Cart Orders -->
               <div v-show="tab === 'one'" v-if="activeOrder">
                 <v-card class="mb-4">
-                  <v-card-title>Order #{{ activeOrder.id }}</v-card-title>
-                  <v-card-subtitle>
+                  <v-card-title class="font-weight-bold text-h4"
+                    >Order #{{ activeOrder.id }}</v-card-title
+                  >
+                  <v-card-subtitle class="font-weight-bold">
                     Ordered on:
                     {{ new Date(activeOrder.created_at).toLocaleDateString() }}
                   </v-card-subtitle>
                   <v-list>
                     <v-list-item v-for="item in orderItems" :key="item.id">
-                      <v-list-item-title>
+                      <v-list-item-title class="font-weight-bold text-h6">
                         {{ item.product_name }}
                       </v-list-item-title>
-                      <v-list-item-subtitle>
+                      <v-list-item-subtitle class="font-weight-bold">
                         Quantity: {{ item.quantity }} | Subtotal: ₱{{
                           item.subtotal.toFixed(2)
                         }}
                       </v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
-                  <v-card-subtitle>
-                    Total Price: ₱{{ activeOrder.total_price.toFixed(2) }}
-                  </v-card-subtitle>
-                  <v-card-actions>
-                    <v-btn icon color="primary">
-                      <v-icon>mdi-receipt</v-icon>
+                  <!-- prettier-ignore -->
+                  <v-card-text>
+                    <div class="d-flex justify-between align-center">
+                      <span class="font-weight-bold text-lg text-h6">
+                        Total Price: <span
+                        class="text-lg font-weight-bold text-orange darken-2 text-h6"
+                      >
+                        ₱{{ activeOrder.total_price.toFixed(2) }}
+                      </span>
+                      </span>
+                    </div>
+                  </v-card-text>
+                  <v-card-actions class="justify-end">
+                    <v-btn
+                      class="order-now-button"
+                      color="orange-darken-2"
+                      variant="elevated"
+                      @click="onOrderNow"
+                    >
+                      Order Now
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -90,7 +112,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.font-fam {
+* {
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
   color: rgb(82, 80, 80);
@@ -104,5 +126,9 @@ onMounted(async () => {
   padding: 20px;
   background-color: #f5f5f5;
   border: 1px solid #ccc;
+}
+
+.order-now-button {
+  margin-top: 16px;
 }
 </style>
