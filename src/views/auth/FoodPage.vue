@@ -2,6 +2,7 @@
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
+import OrderDialog from '@/components/common/OrderDialog.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useProductsStore } from '@/stores/product'
 import { useDisplay } from 'vuetify'
@@ -12,6 +13,10 @@ const { mobile } = useDisplay()
 // Use the authUser and product stores
 const authUser = useAuthUserStore()
 const productStore = useProductsStore()
+
+// State for dialog visibility
+const dialogVisible = ref(false)
+const selectedProduct = ref(null)
 
 // State for drawer visibility
 const isDrawerVisible = ref(false)
@@ -32,6 +37,17 @@ const handleOrderNow = item => {
   } else {
     console.log('Order placed for:', item)
   }
+}
+
+// Open Order Dialog
+const openOrderDialog = product => {
+  selectedProduct.value = product
+  dialogVisible.value = true
+}
+
+const handleDialogClose = () => {
+  dialogVisible.value = false
+  selectedProduct.value = null
 }
 
 // Get Authentication status and user data
@@ -132,7 +148,7 @@ const foodCategories = [
                           color="white"
                           block
                           prepend-icon="mdi mdi-cart"
-                          @click="handleOrderNow(product)"
+                          @click="openOrderDialog(product)"
                         >
                           Order Now
                         </v-btn>
@@ -154,6 +170,14 @@ const foodCategories = [
           </v-container>
         </v-row>
       </v-container>
+
+      <OrderDialog
+        v-if="selectedProduct"
+        :product="selectedProduct"
+        :modelValue="dialogVisible"
+        @update:modelValue="value => (dialogVisible = value)"
+        @close="handleDialogClose"
+      />
 
       <AuthModal
         v-model:isVisible="isLoginModalVisible"
