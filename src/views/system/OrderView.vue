@@ -1,8 +1,32 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useOrdersStore } from '@/stores/order'
+import { useOrderItemsStore } from '@/stores/orderItems'
 
+// Tab management
 const tab = ref('one')
+
+// Stores
+const orderStore = useOrdersStore()
+const orderItemsStore = useOrderItemsStore()
+
+// States
+const activeOrder = ref(null)
+const orderItems = ref([])
+
+// Fetch orders and order items on mount
+onMounted(async () => {
+  // Fetch active order for the logged-in user
+  activeOrder.value = await orderStore.getActiveOrderForUser()
+
+  if (activeOrder.value) {
+    // Fetch order items with product details for the active order
+    orderItems.value = await orderItemsStore.getOrderItemsWithProductDetails(
+      activeOrder.value.id,
+    )
+  }
+})
 </script>
 
 <template>
@@ -14,9 +38,9 @@ const tab = ref('one')
       <v-container>
         <v-row justify="center" align="center">
           <v-col cols="12" md="8">
-            <v-card-title class="headline text-center text-h3 font-fam"
-              >Your Orders</v-card-title
-            >
+            <v-card-title class="headline text-center text-h3 font-fam">
+              Your Orders
+            </v-card-title>
 
             <div class="d-flex justify-center">
               <v-tabs v-model="tab" color="orange">
@@ -27,74 +51,29 @@ const tab = ref('one')
             </div>
 
             <div class="tab-content mt-10">
-              <div v-show="tab === 'one'">
-                <!-- Mock Order List -->
-                <v-card class="mb-4" v-for="order in 1" :key="order">
-                  <v-card-title>Order #{{ order }}</v-card-title>
-                  <v-card-subtitle
-                    >Ordered on:
-                    {{ new Date().toLocaleDateString() }}</v-card-subtitle
-                  >
+              <!-- Cart Orders -->
+              <div v-show="tab === 'one'" v-if="activeOrder">
+                <v-card class="mb-4">
+                  <v-card-title>Order #{{ activeOrder.id }}</v-card-title>
+                  <v-card-subtitle>
+                    Ordered on:
+                    {{ new Date(activeOrder.created_at).toLocaleDateString() }}
+                  </v-card-subtitle>
                   <v-list>
-                    <v-list-item v-for="item in 3" :key="item">
-                      <v-list-item-title
-                        >Food Item {{ item }}</v-list-item-title
-                      >
+                    <v-list-item v-for="item in orderItems" :key="item.id">
+                      <v-list-item-title>
+                        {{ item.product_name }}
+                      </v-list-item-title>
                       <v-list-item-subtitle>
-                        Quantity: {{ item }} | Price: ₱{{ item * 100 }}
+                        Quantity: {{ item.quantity }} | Subtotal: ₱{{
+                          item.subtotal.toFixed(2)
+                        }}
                       </v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
-                  <v-card-actions>
-                    <v-btn icon color="primary">
-                      <v-icon>mdi-receipt</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </div>
-              <div v-show="tab === 'two'">
-                <!-- Mock Order List -->
-                <v-card class="mb-4" v-for="order in 3" :key="order">
-                  <v-card-title>Order #{{ order }}</v-card-title>
-                  <v-card-subtitle
-                    >Ordered on:
-                    {{ new Date().toLocaleDateString() }}</v-card-subtitle
-                  >
-                  <v-list>
-                    <v-list-item v-for="item in 3" :key="item">
-                      <v-list-item-title
-                        >Food Item {{ item }}</v-list-item-title
-                      >
-                      <v-list-item-subtitle>
-                        Quantity: {{ item }} | Price: ₱{{ item * 100 }}
-                      </v-list-item-subtitle>
-                    </v-list-item>
-                  </v-list>
-                  <v-card-actions>
-                    <v-btn icon color="primary">
-                      <v-icon>mdi-receipt</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </div>
-              <div v-show="tab === 'three'">
-                <!-- Mock Order List -->
-                <v-card class="mb-4" v-for="order in 2" :key="order">
-                  <v-card-title>Order #{{ order }}</v-card-title>
-                  <v-card-subtitle
-                    >Ordered on:
-                    {{ new Date().toLocaleDateString() }}</v-card-subtitle
-                  >
-                  <v-list>
-                    <v-list-item v-for="item in 3" :key="item">
-                      <v-list-item-title
-                        >Food Item {{ item }}</v-list-item-title
-                      >
-                      <v-list-item-subtitle>
-                        Quantity: {{ item }} | Price: ₱{{ item * 100 }}
-                      </v-list-item-subtitle>
-                    </v-list-item>
-                  </v-list>
+                  <v-card-subtitle>
+                    Total Price: ₱{{ activeOrder.total_price.toFixed(2) }}
+                  </v-card-subtitle>
                   <v-card-actions>
                     <v-btn icon color="primary">
                       <v-icon>mdi-receipt</v-icon>
@@ -103,13 +82,6 @@ const tab = ref('one')
                 </v-card>
               </div>
             </div>
-
-            <!-- <v-divider class="my-5"></v-divider> -->
-
-            <!-- No Orders Message (Placeholder) -->
-            <!-- <v-alert type="info" class="mx-4" dismissible>
-              You haven't placed any orders yet.
-            </v-alert> -->
           </v-col>
         </v-row>
       </v-container>

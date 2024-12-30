@@ -57,10 +57,40 @@ export const useOrderItemsStore = defineStore('orderItems', () => {
     return data
   }
 
+  // Retrieve order items with product details for a specific order
+  async function getOrderItemsWithProductDetails(orderId) {
+    const { data, error } = await supabase
+      .from('order_items')
+      .select(
+        `
+        id,
+        quantity,
+        subtotal,
+        product_id,
+        products (name, price, image_url)
+        `,
+      )
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching order items with product details:', error)
+      return []
+    }
+
+    // Format the data to include product details in each order item
+    return data.map(item => ({
+      ...item,
+      product_name: item.products?.name || 'Unknown Product',
+      product_price: item.products?.price || 0,
+    }))
+  }
+
   return {
     orderItems,
     $reset,
     getOrderItems,
     addOrderItem,
+    getOrderItemsWithProductDetails,
   }
 })
