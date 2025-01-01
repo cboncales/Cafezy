@@ -27,16 +27,19 @@ export const useOrdersStore = defineStore('orders', () => {
       .from('orders')
       .select('*')
       .eq('user_id', userId)
-      .eq('status', false) // Find only active (incomplete) orders
-      .single() // Get the first matching order
+      .eq('status', false) // Look for incomplete (cart) orders
+      .maybeSingle() // Use `maybeSingle` to avoid errors when no rows are found
 
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116 means no rows found
+    if (error) {
       console.error('Error fetching active order:', error)
       return null
     }
 
-    return data
+    if (!data) {
+      console.log('No active cart order found.')
+    }
+
+    return data // Will be null if no matching row exists
   }
 
   // Create a new order
@@ -87,11 +90,66 @@ export const useOrdersStore = defineStore('orders', () => {
     return data
   }
 
+  const onOrderNow = async () => {
+    if (!activeOrder.value) {
+      console.error('No active order to update.')
+      return
+    }
+
+    try {
+      // Update the order status to true (pending)
+      const updatedOrder = await orderStore.updateOrder(activeOrder.value.id, {
+        status: true,
+      })
+
+      if (updatedOrder) {
+        console.log('Order status updated successfully.')
+
+        // Clear the active order since it's now in pending status
+        activeOrder.value = null
+        orderItems.value = []
+
+        // Move to the "Pending" tab
+        tab.value = 'two'
+
+        // Optional: Fetch the latest orders if needed
+        // await fetchOrders();
+      }
+    } catch (error) {
+      console.error('Error updating order:', error)
+    }
+  }
+
+  // Fetch pending orders for the logged-in user
+  async function getPendingOrdersForUser() {
+    const userId = authStore.userData?.id
+
+    if (!userId) {
+      console.error('User is not logged in.')
+      return []
+    }
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', true) // Fetch orders marked as pending
+
+    if (error) {
+      console.error('Error fetching pending orders:', error)
+      return []
+    }
+
+    return data
+  }
+
   return {
     orders,
     $reset,
     getActiveOrderForUser,
+    getPendingOrdersForUser,
     createOrder,
     updateOrder,
+    onOrderNow,
   }
 })

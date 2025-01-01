@@ -6,7 +6,7 @@ import OrderDialog from '@/components/common/OrderDialog.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useProductsStore } from '@/stores/product'
 import { useDisplay } from 'vuetify'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
 const { mobile } = useDisplay()
 
@@ -18,6 +18,8 @@ const productStore = useProductsStore()
 const dialogVisible = ref(false)
 const selectedProduct = ref(null)
 
+const selectedCategories = ref([])
+
 // State for drawer visibility
 const isDrawerVisible = ref(false)
 
@@ -28,6 +30,30 @@ const isAdmin = ref(false)
 
 // Products state
 const products = ref([])
+
+// Dynamic filter based on selected chips
+const filteredProducts = computed(() => {
+  // If no category is selected, show all products
+  if (selectedCategories.value.length === 0) {
+    return products.value
+  }
+
+  // Otherwise, filter products that match the selected categories
+  return products.value.filter(product =>
+    selectedCategories.value.includes(product.category_id),
+  )
+})
+
+// Toggle chip selection
+const toggleCategory = categoryId => {
+  if (selectedCategories.value.includes(categoryId)) {
+    selectedCategories.value = selectedCategories.value.filter(
+      id => id !== categoryId,
+    )
+  } else {
+    selectedCategories.value.push(categoryId)
+  }
+}
 
 // Handle "Order Now" button click
 const handleOrderNow = item => {
@@ -80,15 +106,7 @@ onMounted(() => {
 })
 
 // Food Categories
-const foodCategories = [
-  'Rice',
-  'Filipino Dishes',
-  'Street Foods',
-  'Pulutan',
-  'Salads',
-  'Drinks',
-  'Desserts',
-]
+const foodCategories = ['Rice', 'Dishes', 'Street Foods', 'Drinks', 'Desserts']
 </script>
 
 <template>
@@ -109,26 +127,27 @@ const foodCategories = [
           <v-container>
             <div class="head-container my-16">
               <h1 class="head-text text-center my-5">Food Menu</h1>
-              <v-item-group
-                class="text-center"
-                selected-class="bg-orange"
-                multiple
-              >
-                <v-item
+              <v-item-group class="text-center" multiple>
+                <v-chip
                   v-for="(category, index) in foodCategories"
                   :key="index"
-                  v-slot="{ selectedClass, toggle }"
+                  class="mx-2"
+                  :class="{
+                    'bg-orange text-white': selectedCategories.includes(
+                      index + 1,
+                    ),
+                  }"
+                  @click="toggleCategory(index + 1)"
                 >
-                  <v-chip class="mx-2" :class="selectedClass" @click="toggle">
-                    {{ category }}
-                  </v-chip>
-                </v-item>
+                  {{ category }}
+                </v-chip>
               </v-item-group>
             </div>
 
+            <!-- Products filtered by category -->
             <v-row justify="center" align="center">
               <v-col
-                v-for="product in products"
+                v-for="product in filteredProducts"
                 :key="product.id"
                 cols="12"
                 md="4"
@@ -150,7 +169,7 @@ const foodCategories = [
                           prepend-icon="mdi mdi-cart"
                           @click="openOrderDialog(product)"
                         >
-                          Order Now
+                          Order
                         </v-btn>
                       </v-card-actions>
                     </div>
