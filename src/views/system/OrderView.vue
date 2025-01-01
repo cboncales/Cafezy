@@ -14,7 +14,8 @@ const orderItemsStore = useOrderItemsStore()
 // States
 const activeOrder = ref(null)
 const orderItems = ref([])
-const pendingOrders = ref([]) // For pending orders
+const pendingOrders = ref([])
+const pendingOrderItems = ref({}) // New ref to store items for each pending order
 
 // Fetch orders and order items on mount
 onMounted(async () => {
@@ -30,16 +31,46 @@ onMounted(async () => {
     console.log('No active order found. User may need to create a new order.')
   }
 
-  // Fetch pending orders
-  pendingOrders.value = await orderStore.getPendingOrdersForUser()
+  // Fetch pending orders and their items
+  await fetchPendingOrdersAndItems()
 })
+
+// Function to fetch pending orders and their items
+const fetchPendingOrdersAndItems = async () => {
+  pendingOrders.value = await orderStore.getPendingOrdersForUser()
+  pendingOrderItems.value = {}
+
+  // Fetch items for each pending order
+  for (const order of pendingOrders.value) {
+    pendingOrderItems.value[order.id] =
+      await orderItemsStore.getOrderItemsWithProductDetails(order.id)
+  }
+}
+
+const removeOrderItem = async itemId => {
+  try {
+    const success = await orderItemsStore.deleteOrderItem(itemId)
+
+    if (success) {
+      // Fetch updated order items after deletion
+      orderItems.value = await orderItemsStore.getOrderItemsWithProductDetails(
+        activeOrder.value.id,
+      )
+      console.log('Order item removed successfully')
+    } else {
+      console.error('Failed to remove order item')
+    }
+  } catch (error) {
+    console.error('Error removing order item:', error)
+  }
+}
 
 // Watch the "Pending" tab and refresh data when it becomes active
 watch(
   () => tab.value,
   async newTab => {
     if (newTab === 'two') {
-      pendingOrders.value = await orderStore.getPendingOrdersForUser()
+      await fetchPendingOrdersAndItems()
     }
   },
 )
@@ -66,7 +97,7 @@ const onOrderNow = async () => {
 
       // Move to the "Pending" tab and fetch pending orders
       tab.value = 'two'
-      pendingOrders.value = await orderStore.getPendingOrdersForUser()
+      await fetchPendingOrdersAndItems()
     }
   } catch (error) {
     console.error('Error updating order:', error)
@@ -99,18 +130,36 @@ const onOrderNow = async () => {
               <!-- Cart Orders -->
               <div v-show="tab === 'one'" v-if="activeOrder">
                 <v-card class="mb-4">
-                  <v-card-title class="font-weight-bold text-h4"
-                    >Order #{{ activeOrder.id }}</v-card-title
-                  >
+                  <v-card-title class="font-weight-bold text-h4">
+                    Order #{{ activeOrder.id }}
+                  </v-card-title>
                   <v-card-subtitle class="font-weight-bold">
                     Ordered on:
                     {{ new Date(activeOrder.created_at).toLocaleDateString() }}
                   </v-card-subtitle>
                   <v-list>
-                    <v-list-item v-for="item in orderItems" :key="item.id">
-                      <v-list-item-title class="font-weight-bold text-h6">
-                        {{ item.product_name }}
-                      </v-list-item-title>
+                    <v-list-item
+                      v-for="item in orderItems"
+                      :key="item.id"
+                      class="d-flex justify-space-between align-center my-3"
+                    >
+                      <!-- Product Details -->
+                      <div class="d-flex align-center my-2">
+                        <v-list-item-title class="font-weight-bold text-h6">
+                          {{ item.product_name }}
+                        </v-list-item-title>
+
+                        <!-- Remove Button -->
+                        <v-btn
+                          icon
+                          color="red"
+                          size="28"
+                          @click="removeOrderItem(item.id)"
+                          class="ml-auto"
+                        >
+                          <v-icon size="18">mdi-delete</v-icon>
+                        </v-btn>
+                      </div>
                       <v-list-item-subtitle class="font-weight-bold">
                         Quantity: {{ item.quantity }} | Subtotal: ₱{{
                           item.subtotal.toFixed(2)
@@ -118,15 +167,16 @@ const onOrderNow = async () => {
                       </v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
-                  <!-- prettier-ignore -->
+
                   <v-card-text>
                     <div class="d-flex justify-between align-center">
                       <span class="font-weight-bold text-lg text-h6">
-                        Total Price: <span
-                        class="text-lg font-weight-bold text-orange darken-2 text-h6"
-                      >
-                        ₱{{ activeOrder.total_price.toFixed(2) }}
-                      </span>
+                        Total Price:
+                        <span
+                          class="text-lg font-weight-bold text-orange darken-2 text-h6"
+                        >
+                          ₱{{ activeOrder.total_price.toFixed(2) }}
+                        </span>
                       </span>
                     </div>
                   </v-card-text>
@@ -156,6 +206,21 @@ const onOrderNow = async () => {
                     Ordered on:
                     {{ new Date(order.created_at).toLocaleDateString() }}
                   </v-card-subtitle>
+                  <v-list v-if="pendingOrderItems[order.id]">
+                    <v-list-item
+                      v-for="item in pendingOrderItems[order.id]"
+                      :key="item.id"
+                    >
+                      <v-list-item-title class="font-weight-bold text-h6">
+                        {{ item.product_name }}
+                      </v-list-item-title>
+                      <v-list-item-subtitle class="font-weight-bold">
+                        Quantity: {{ item.quantity }} | Subtotal: ₱{{
+                          item.subtotal.toFixed(2)
+                        }}
+                      </v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
                   <v-card-text>
                     <span class="font-weight-bold text-lg text-h6">
                       Total Price:
