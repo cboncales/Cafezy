@@ -86,9 +86,23 @@ export const useOrderItemsStore = defineStore('orderItems', () => {
     }))
   }
 
-  // Delete Product
-  async function deleteProduct(id) {
-    return await supabase.from('products').delete().eq('id', id)
+  // Delete Order Item
+  async function deleteOrderItem(itemId) {
+    const { error } = await supabase
+      .from('order_items')
+      .delete()
+      .eq('id', itemId)
+
+    if (error) {
+      console.error('Error deleting order item:', error)
+      return false
+    }
+
+    // Remove item from local state
+    orderItems.value = orderItems.value.filter(item => item.id !== itemId)
+
+    console.log('Order item deleted successfully')
+    return true
   }
 
   return {
@@ -97,5 +111,6 @@ export const useOrderItemsStore = defineStore('orderItems', () => {
     getOrderItems,
     addOrderItem,
     getOrderItemsWithProductDetails,
+    deleteOrderItem,
   }
 })

@@ -143,11 +143,6 @@ export const useOrdersStore = defineStore('orders', () => {
     return data
   }
 
-  // Delete Product
-  async function deleteProduct(id) {
-    return await supabase.from('products').delete().eq('id', id)
-  }
-
   return {
     orders,
     $reset,

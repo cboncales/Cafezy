@@ -1,10 +1,10 @@
 <script setup>
-import { useAuthUserStore } from '@/stores/authUser'
+// import { useAuthUserStore } from '@/stores/authUser'
 import AlertNotification from '@/components/common/AlertNotification.vue'
 import { requiredValidator, imageValidator } from '@/utils/validators'
 import { formActionDefault } from '@/utils/supabase.js'
 import { useDisplay } from 'vuetify'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useProductsStore } from '@/stores/product'
 import { fileExtract } from '@/utils/helpers'
 
@@ -17,7 +17,7 @@ const { mdAndDown } = useDisplay()
 
 // Use Pinia Store
 const productStore = useProductsStore()
-const authStore = useAuthUserStore()
+// const authStore = useAuthUserStore()
 
 // Load Variables
 const formDataDefault = {
@@ -25,13 +25,23 @@ const formDataDefault = {
   price: 0,
   description: '',
   image: null,
-  user_id: authStore.userData.id,
+  category_id: null,
+  // user_id: authStore.userData.id,
 }
 const formData = ref({ ...formDataDefault })
 const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
 const isUpdate = ref(false)
 const imgPreview = ref('/images/img-product.png')
+
+// Static Food Categories
+const foodCategories = [
+  { id: 1, name: 'Rice' },
+  { id: 2, name: 'Dishes' },
+  { id: 3, name: 'Street Foods' },
+  { id: 4, name: 'Drinks' },
+  { id: 5, name: 'Desserts' },
+]
 
 // Monitor itemData if it has data
 watch(
@@ -43,6 +53,17 @@ watch(
   },
   { immediate: true },
 )
+
+// Insert selected category into the database
+const insertCategory = async categoryId => {
+  const category = foodCategories.find(c => c.id === categoryId)
+  if (!category) return
+
+  const { data, error } = await productStore.addCategory(category)
+  if (error) {
+    console.error('Error adding category:', error.message)
+  }
+}
 
 // Function to handle file change and show image preview
 const onPreview = async event => {
@@ -59,6 +80,9 @@ const onPreviewReset = () => {
 // Function to handle form submission
 const onSubmit = async () => {
   formAction.value = { ...formActionDefault, formProcess: true }
+
+  // Insert selected category into the categories table
+  await insertCategory(formData.value.category_id)
 
   const { data, error } = isUpdate.value
     ? await productStore.updateProduct(formData.value)
@@ -130,6 +154,16 @@ const onFormReset = () => {
                 type="number"
                 :rules="[requiredValidator]"
               ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                v-model="formData.category_id"
+                :items="foodCategories"
+                item-value="id"
+                item-title="name"
+                label="Category"
+                :rules="[requiredValidator]"
+              ></v-select>
             </v-col>
             <v-col cols="12">
               <v-textarea

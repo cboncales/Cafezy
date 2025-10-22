@@ -20,12 +20,17 @@ export const useProductsStore = defineStore('products', () => {
   async function getProducts(search) {
     const { data } = await supabase
       .from('products')
-      .select('*')
+      .select('*, categories(name)')
+      .order('category_id', { ascending: true })
       .order('name', { ascending: true })
       .ilike('name', `%${search || ''}%`)
 
-    // Set the retrieved data to state
-    products.value = data || []
+    // Format the data to include the category name
+    products.value =
+      data?.map(product => ({
+        ...product,
+        categoryName: product.categories?.name || 'Unknown',
+      })) || []
   }
 
   async function addProduct(formData) {
@@ -88,6 +93,11 @@ export const useProductsStore = defineStore('products', () => {
     }
   }
 
+  // Add Category
+  async function addCategory(category) {
+    return await supabase.from('categories').insert([category])
+  }
+
   return {
     productsFromApi,
     products,
@@ -96,5 +106,6 @@ export const useProductsStore = defineStore('products', () => {
     addProduct,
     updateProduct,
     deleteProduct,
+    addCategory,
   }
 })
