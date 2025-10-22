@@ -38,7 +38,7 @@ const onSubmit = async () => {
 
   if (error) {
     // Add Error Message and Status Code
-    formAction.value.formErrorMessage = error.messsage
+    formAction.value.formErrorMessage = error.message
     formAction.value.formStatus = error.status
   } else if (data) {
     // Add Success Message

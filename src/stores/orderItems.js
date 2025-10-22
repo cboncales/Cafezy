@@ -86,6 +86,11 @@ export const useOrderItemsStore = defineStore('orderItems', () => {
     }))
   }
 
+  // Delete Product
+  async function deleteProduct(id) {
+    return await supabase.from('products').delete().eq('id', id)
+  }
+
   return {
     orderItems,
     $reset,
