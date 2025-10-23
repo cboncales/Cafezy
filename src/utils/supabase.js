@@ -1,11 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Get environment variables with fallback for Vercel builds
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://eghdgxrbxarxwkbxxrte.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnaGRneHJieGFyeHdrYnh4cnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxNzI4MjYsImV4cCI6MjA3Mzc0ODgyNn0.LOURvDC3YbBtG5RlpgN_Z0M41vC0ubf5hk_3spBZpp8'
 
-// Create a single supabase client for interacting with your database
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+)
 
 //Form Actions utils
 export const formActionDefault = {
