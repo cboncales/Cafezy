@@ -1,12 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 )
 
-//Form Actions utils
+// Form Actions utils
 export const formActionDefault = {
   formProcess: false,
   formStatus: 200,
@@ -14,7 +13,7 @@ export const formActionDefault = {
   formSuccessMessage: '',
 }
 
-//check if the session exists and is valid; Return false if there's and error
+// check if the session exists and is valid; Return false if there's an error
 export const isAuthenticated = async () => {
   const { data, error } = await supabase.auth.getSession()
 
@@ -50,7 +49,6 @@ export const tablePagination = (
 }
 
 // 👉 Handle Search if null turn to empty string
-// prettier-ignore
-export const tableSearch = (search) => {
+export const tableSearch = search => {
   return (search ||= '')
 }
