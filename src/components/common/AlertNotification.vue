@@ -1,5 +1,14 @@
 <script setup>
-const props = defineProps(['formSuccessMessage', 'formErrorMessage'])
+const props = defineProps({
+  formSuccessMessage: {
+    type: String,
+    default: '',
+  },
+  formErrorMessage: {
+    type: String,
+    default: '',
+  },
+})
 </script>
 
 <template>
@@ -12,7 +21,7 @@ const props = defineProps(['formSuccessMessage', 'formErrorMessage'])
     density="compact"
     border="start"
     closable
-  ></v-alert>
+  />
 
   <v-alert
     v-if="props.formErrorMessage"
@@ -23,5 +32,5 @@ const props = defineProps(['formSuccessMessage', 'formErrorMessage'])
     density="compact"
     border="start"
     closable
-  ></v-alert>
+  />
 </template>
