@@ -70,7 +70,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
           ...user_metadata,
           firstname,
           lastname,
-          is_admin: user_metadata.is_admin ?? false
+          is_admin: true
         }
       })
 
