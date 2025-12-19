@@ -31,7 +31,18 @@ export const useAuthUserStore = defineStore('authUser', () => {
 
     if (data.session) {
       const { id, email, user_metadata } = data.session.user
-      userData.value = { id, email, ...user_metadata }
+      
+      // Check if this is a Google OAuth user without firstname/lastname
+      if (user_metadata.full_name && (!user_metadata.firstname || !user_metadata.lastname)) {
+        // Parse full_name to get firstname and lastname
+        const nameParts = user_metadata.full_name.trim().split(' ')
+        const firstname = nameParts[0] || ''
+        const lastname = nameParts.slice(1).join(' ') || nameParts[0] || ''
+        
+        userData.value = { id, email, ...user_metadata, firstname, lastname }
+      } else {
+        userData.value = { id, email, ...user_metadata }
+      }
     }
 
     return !!data.session
@@ -46,8 +57,29 @@ export const useAuthUserStore = defineStore('authUser', () => {
       }
     } = await supabase.auth.getUser()
 
-    // Set the retrieved information to state
-    userData.value = { id, email, ...user_metadata }
+    // Check if this is a Google OAuth user without firstname/lastname
+    if (user_metadata.full_name && (!user_metadata.firstname || !user_metadata.lastname)) {
+      // Parse full_name to get firstname and lastname
+      const nameParts = user_metadata.full_name.trim().split(' ')
+      const firstname = nameParts[0] || ''
+      const lastname = nameParts.slice(1).join(' ') || nameParts[0] || ''
+
+      // Update user metadata with parsed names
+      await supabase.auth.updateUser({
+        data: {
+          ...user_metadata,
+          firstname,
+          lastname,
+          is_admin: user_metadata.is_admin ?? false
+        }
+      })
+
+      // Update local state with parsed names
+      userData.value = { id, email, ...user_metadata, firstname, lastname }
+    } else {
+      // Set the retrieved information to state
+      userData.value = { id, email, ...user_metadata }
+    }
   }
 
   // Retrieve User Roles Pages
