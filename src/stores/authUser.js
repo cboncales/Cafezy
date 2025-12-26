@@ -31,14 +31,14 @@ export const useAuthUserStore = defineStore('authUser', () => {
 
     if (data.session) {
       const { id, email, user_metadata } = data.session.user
-      
+
       // Check if this is a Google OAuth user without firstname/lastname
       if (user_metadata.full_name && (!user_metadata.firstname || !user_metadata.lastname)) {
         // Parse full_name to get firstname and lastname
         const nameParts = user_metadata.full_name.trim().split(' ')
         const firstname = nameParts[0] || ''
         const lastname = nameParts.slice(1).join(' ') || nameParts[0] || ''
-        
+
         userData.value = { id, email, ...user_metadata, firstname, lastname }
       } else {
         userData.value = { id, email, ...user_metadata }
@@ -70,7 +70,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
           ...user_metadata,
           firstname,
           lastname,
-          is_admin: true
+          is_admin: false
         }
       })
 
