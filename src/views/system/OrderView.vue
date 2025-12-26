@@ -3,6 +3,7 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useOrdersStore } from '@/stores/order'
 import { useOrderItemsStore } from '@/stores/orderItems'
+import { sendOrderNowEmail } from '@/utils/email'
 
 // Tab management
 const tab = ref('one')
@@ -15,7 +16,10 @@ const orderItemsStore = useOrderItemsStore()
 const activeOrder = ref(null)
 const orderItems = ref([])
 const pendingOrders = ref([])
-const pendingOrderItems = ref({}) // New ref to store items for each pending order
+const pendingOrderItems = ref({})
+
+// Drawer (your template uses it)
+const isDrawerVisible = ref(false)
 
 // Fetch orders and order items on mount
 onMounted(async () => {
@@ -35,12 +39,11 @@ onMounted(async () => {
   await fetchPendingOrdersAndItems()
 })
 
-// Function to fetch pending orders and their items
+// Function to fetch pending orders and order items
 const fetchPendingOrdersAndItems = async () => {
   pendingOrders.value = await orderStore.getPendingOrdersForUser()
   pendingOrderItems.value = {}
 
-  // Fetch items for each pending order
   for (const order of pendingOrders.value) {
     pendingOrderItems.value[order.id] =
       await orderItemsStore.getOrderItemsWithProductDetails(order.id)
@@ -52,7 +55,6 @@ const removeOrderItem = async itemId => {
     const success = await orderItemsStore.deleteOrderItem(itemId)
 
     if (success) {
-      // Fetch updated order items after deletion
       orderItems.value = await orderItemsStore.getOrderItemsWithProductDetails(
         activeOrder.value.id,
       )
@@ -75,7 +77,7 @@ watch(
   },
 )
 
-// Handle "Order Now" button click
+// Handle "Order Now" button click (NOW includes EmailJS)
 const onOrderNow = async () => {
   if (!activeOrder.value) {
     console.error('No active order to update.')
@@ -83,7 +85,26 @@ const onOrderNow = async () => {
   }
 
   try {
-    // Update the order status to true (mark as pending)
+    // 1) Build email message from the cart
+    const itemsText = orderItems.value
+      .map(
+        i =>
+          `${i.product_name} x${i.quantity} (₱${Number(i.subtotal).toFixed(2)})`,
+      )
+      .join(', ')
+
+    const templateParams = {
+      order_id: String(activeOrder.value.id),
+      items: itemsText,
+      total_price: `₱${Number(activeOrder.value.total_price).toFixed(2)}`,
+      // CHANGE THIS to your real receiver
+      to_email: 'yourgmail@gmail.com',
+    }
+
+    // 2) Send email (EmailJS)
+    await sendOrderNowEmail(templateParams)
+
+    // 3) Update the order status to true (mark as pending)
     const updatedOrder = await orderStore.updateOrder(activeOrder.value.id, {
       status: true,
     })
@@ -100,7 +121,7 @@ const onOrderNow = async () => {
       await fetchPendingOrdersAndItems()
     }
   } catch (error) {
-    console.error('Error updating order:', error)
+    console.error('Error updating order / sending email:', error)
   }
 }
 </script>
@@ -137,19 +158,18 @@ const onOrderNow = async () => {
                     Ordered on:
                     {{ new Date(activeOrder.created_at).toLocaleDateString() }}
                   </v-card-subtitle>
+
                   <v-list>
                     <v-list-item
                       v-for="item in orderItems"
                       :key="item.id"
                       class="d-flex justify-space-between align-center my-3"
                     >
-                      <!-- Product Details -->
                       <div class="d-flex align-center my-2">
                         <v-list-item-title class="font-weight-bold text-h6">
                           {{ item.product_name }}
                         </v-list-item-title>
 
-                        <!-- Remove Button -->
                         <v-btn
                           icon
                           color="red"
@@ -160,6 +180,7 @@ const onOrderNow = async () => {
                           <v-icon size="18">mdi-delete</v-icon>
                         </v-btn>
                       </div>
+
                       <v-list-item-subtitle class="font-weight-bold">
                         Quantity: {{ item.quantity }} | Subtotal: ₱{{
                           item.subtotal.toFixed(2)
@@ -180,6 +201,7 @@ const onOrderNow = async () => {
                       </span>
                     </div>
                   </v-card-text>
+
                   <v-card-actions class="justify-end">
                     <v-btn
                       class="order-now-button"
@@ -192,6 +214,7 @@ const onOrderNow = async () => {
                   </v-card-actions>
                 </v-card>
               </div>
+
               <!-- Pending Orders -->
               <div v-show="tab === 'two'">
                 <v-card
@@ -206,6 +229,7 @@ const onOrderNow = async () => {
                     Ordered on:
                     {{ new Date(order.created_at).toLocaleDateString() }}
                   </v-card-subtitle>
+
                   <v-list v-if="pendingOrderItems[order.id]">
                     <v-list-item
                       v-for="item in pendingOrderItems[order.id]"
@@ -221,6 +245,7 @@ const onOrderNow = async () => {
                       </v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
+
                   <v-card-text>
                     <span class="font-weight-bold text-lg text-h6">
                       Total Price:
